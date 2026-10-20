@@ -331,6 +331,7 @@ fn main() {
             topology::save_diagram,
             workbench::service_catalog,
             workbench::service_operations,
+            workbench::api_input_schema,
             workbench::set_advanced_enabled,
             workbench::api_skeleton,
             workbench::prepare_api,

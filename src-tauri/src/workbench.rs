@@ -243,6 +243,66 @@ pub async fn service_operations(service: String) -> Result<Value, String> {
         Ok(json!(items))
     }).await.map_err(|e| e.to_string())?
 }
+
+// Keep shape references rather than expanding recursive AWS models into trees.
+fn input_schema(m: &Value, op: &Value) -> Result<Value, String> {
+    let Some(root) = op["input"]["shape"].as_str() else {
+        return Ok(json!({"root":"Empty","shapes":{"Empty":{"type":"structure","members":{}}}}));
+    };
+    let mut shapes = serde_json::Map::new();
+    let mut pending = vec![root.to_owned()];
+    while let Some(name) = pending.pop() {
+        if shapes.contains_key(&name) {
+            continue;
+        }
+        let source = m["shapes"][&name]
+            .as_object()
+            .ok_or("Missing input shape")?;
+        let mut shape = serde_json::Map::new();
+        for key in [
+            "type",
+            "documentation",
+            "enum",
+            "min",
+            "max",
+            "pattern",
+            "sensitive",
+            "required",
+            "members",
+            "member",
+            "key",
+            "value",
+        ] {
+            if let Some(value) = source.get(key) {
+                shape.insert(key.into(), value.clone());
+            }
+        }
+        if let Some(members) = source.get("members").and_then(Value::as_object) {
+            pending.extend(
+                members
+                    .values()
+                    .filter_map(|v| v["shape"].as_str().map(str::to_owned)),
+            );
+        }
+        for key in ["member", "key", "value"] {
+            if let Some(reference) = source.get(key).and_then(|v| v["shape"].as_str()) {
+                pending.push(reference.to_owned());
+            }
+        }
+        shapes.insert(name, Value::Object(shape));
+    }
+    Ok(json!({"root":root,"shapes":shapes,"documentation":op["documentation"]}))
+}
+
+#[tauri::command]
+pub async fn api_input_schema(service: String, operation: String) -> Result<Value, String> {
+    tauri::async_runtime::spawn_blocking(move || {
+        let m = model(&service)?;
+        input_schema(&m, self::operation(&m, &operation)?)
+    })
+    .await
+    .map_err(|e| e.to_string())?
+}
 #[tauri::command]
 pub fn set_advanced_enabled(
     enabled: bool,
@@ -420,6 +480,28 @@ mod tests {
         let m = json!({"shapes":{"Request":{"type":"structure","members":{"Body":{"shape":"Blob"}}},"Blob":{"type":"blob"}}});
         assert!(!supported(&m, &json!({"input":{"shape":"Request"}})));
     }
+    #[test]
+    fn input_schema_preserves_descriptions_constraints_and_recursive_references() {
+        let m = json!({"shapes":{
+            "Input":{"type":"structure","required":["Name"],"members":{
+                "Name":{"shape":"Name","documentation":"<p>Resource name.</p>"},
+                "Child":{"shape":"Input"}
+            }},
+            "Name":{"type":"string","min":1,"max":20,"enum":["one","two"],"sensitive":true},
+            "Unrelated":{"type":"string"}
+        }});
+        let schema = input_schema(&m, &json!({"input":{"shape":"Input"}})).unwrap();
+        assert_eq!(schema["shapes"].as_object().unwrap().len(), 2);
+        assert_eq!(schema["shapes"]["Input"]["required"][0], "Name");
+        assert_eq!(
+            schema["shapes"]["Input"]["members"]["Name"]["documentation"],
+            "<p>Resource name.</p>"
+        );
+        assert_eq!(schema["shapes"]["Name"]["min"], 1);
+        assert_eq!(schema["shapes"]["Name"]["sensitive"], true);
+        assert_eq!(schema["shapes"]["Name"]["enum"][1], "two");
+        assert_eq!(input_schema(&m, &json!({})).unwrap()["root"], "Empty");
+    }
     fn pending(operation: &str, age: u64) -> Pending {
         Pending {
             query: ApiQuery {
@@ -471,6 +553,22 @@ mod tests {
             .unwrap()
             .iter()
             .any(|v| v["name"] == "create-tags"));
+        for (service, operation) in [
+            ("ec2", "create-tags"),
+            ("rds", "modify-db-instance"),
+            ("s3api", "put-bucket-lifecycle-configuration"),
+            ("logs", "filter-log-events"),
+        ] {
+            let schema = api_input_schema(service.into(), operation.into())
+                .await
+                .unwrap();
+            let root = schema["root"].as_str().unwrap();
+            let members = schema["shapes"][root]["members"].as_object().unwrap();
+            assert!(!members.is_empty());
+            assert!(members.values().any(|field| field["documentation"]
+                .as_str()
+                .is_some_and(|s| !s.is_empty())));
+        }
         let query = ApiQuery {
             service: "ec2".into(),
             operation: "create-tags".into(),

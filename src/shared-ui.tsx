@@ -1,10 +1,4 @@
-import {
-  useEffect,
-  useRef,
-  useState,
-  type ReactElement,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, type ReactElement, type ReactNode } from "react";
 import {
   Server,
   Database,
@@ -28,7 +22,7 @@ import {
   ContextMenuContent,
   ContextMenuItem,
 } from "@/components/ui/context-menu";
-import { createPortal } from "react-dom";
+import { toast } from "sonner";
 import { text } from "./app-model";
 export function ServiceIcon({
   service,
@@ -106,7 +100,10 @@ export type MenuAction = {
 };
 export const copyAction = (label: string, value: unknown): MenuAction => ({
   label,
-  run: () => navigator.clipboard.writeText(String(value ?? "")),
+  run: async () => {
+    await navigator.clipboard.writeText(String(value ?? ""));
+    toast.success(text("복사했습니다.", "Copied."));
+  },
 });
 export function ContextActions({
   children,
@@ -116,7 +113,6 @@ export function ContextActions({
   actions: MenuAction[];
 }) {
   const source = useRef<HTMLElement | null>(null);
-  const [status, setStatus] = useState("");
   return (
     <>
       <ContextMenu>
@@ -175,7 +171,7 @@ export function ContextActions({
               onSelect={() => {
                 Promise.resolve()
                   .then(a.run)
-                  .catch((e) => setStatus(String(e)));
+                  .catch((e) => toast.error(String(e)));
               }}
             >
               {a.label}
@@ -183,38 +179,23 @@ export function ContextActions({
           ))}
         </ContextMenuContent>
       </ContextMenu>
-      {status &&
-        createPortal(
-          <div
-            role="alert"
-            className="fixed bottom-4 right-4 z-[100] max-w-sm rounded-md border bg-background p-3 text-destructive"
-            onClick={() => setStatus("")}
-          >
-            {status}
-          </div>,
-          document.body,
-        )}
     </>
   );
 }
 export function JsonBlock({ value }: { value: unknown }) {
-  const [status, setStatus] = useState("");
   const content =
     typeof value === "string" ? value : JSON.stringify(value, null, 2);
   return (
     <div className="relative rounded-lg border bg-muted/40">
       <div className="flex items-center justify-end gap-2 border-b px-2 py-1">
-        <span role="status" className="text-xs text-muted-foreground">
-          {status}
-        </span>
         <Button
           variant="ghost"
           size="sm"
           onClick={() =>
             navigator.clipboard
               .writeText(content)
-              .then(() => setStatus(text("복사됨", "Copied")))
-              .catch((e) => setStatus(String(e)))
+              .then(() => toast.success(text("복사했습니다.", "Copied.")))
+              .catch((e) => toast.error(String(e)))
           }
         >
           <Copy />

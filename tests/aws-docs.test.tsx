@@ -65,5 +65,7 @@ test("documentation follows the selected operation without executing AWS request
   ).toHaveAttribute("href", awsDocsUrl("ec2", "create-tags"));
   expect(invoke.mock.calls.map(([command]) => command)).toEqual([
     "service_operations",
+    "api_input_schema",
+    "api_input_schema",
   ]);
 });

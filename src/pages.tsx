@@ -1,5 +1,8 @@
 import { useTheme, type ThemeMode } from "./theme";
 import { AwsDocsLink } from "./aws-docs";
+import { ApiRequestEditor } from "./api-request-editor";
+import { parseApiInput, validateApiInput, type ApiSchema } from "./api-schema";
+import { toast } from "sonner";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ArrowLeft, Search, Star } from "lucide-react";
@@ -226,7 +229,6 @@ export function Settings({
     [region, setRegion] = useState(ctx.region),
     [enabled, setEnabled] = useState(advanced),
     [busy, setBusy] = useState(false),
-    [status, setStatus] = useState(""),
     [error, setError] = useState("");
   return (
     <>
@@ -251,7 +253,7 @@ export function Settings({
           setLanguage(lang);
           savePreferences({ ...readPreferences(), density });
           onSave(region);
-          setStatus(text("설정을 저장했습니다.", "Preferences saved."));
+          toast.success(text("설정을 저장했습니다.", "Preferences saved."));
         }}
       >
         <Card>
@@ -389,7 +391,7 @@ export function Settings({
               variant="outline"
               onClick={() => {
                 ctx.clearCache();
-                setStatus(
+                toast.success(
                   text("캐시를 비웠습니다.", "Resource cache cleared."),
                 );
               }}
@@ -400,12 +402,6 @@ export function Settings({
         </Card>
       </div>
       <div className="mt-5 flex max-w-4xl flex-wrap items-center justify-end gap-3 border-t pt-4">
-        <p
-          role="status"
-          className="min-w-0 flex-1 text-sm text-muted-foreground"
-        >
-          {status}
-        </p>
         <Button type="submit" form="preferences-form">
           {text("설정 저장", "Save preferences")}
         </Button>
@@ -719,6 +715,8 @@ type Review = { id: string; account: string; phrase: string };
 export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
   const service = route.service!;
   const [operations, setOperations] = useState<Operation[]>([]),
+    [schema, setSchema] = useState<ApiSchema>(),
+    [inputReady, setInputReady] = useState(false),
     [selected, setSelected] = useState<Operation>(),
     [query, setQuery] = useState(""),
     [input, setInput] = useState(JSON.stringify(route.input ?? {}, null, 2)),
@@ -795,11 +793,9 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
     await run(async () => {
       invalidate();
       const id = epoch.current;
-      const value: unknown = JSON.parse(input);
-      if (!value || Array.isArray(value) || typeof value !== "object")
-        throw Error(
-          text("JSON 객체를 입력하세요.", "Input must be a JSON object."),
-        );
+      const value = parseApiInput(input);
+      const issues = schema ? validateApiInput(schema, value) : [];
+      if (issues.length) throw Error(issues.join("\n"));
       const output = ctx.demo
         ? {
             id: "offline",
@@ -869,6 +865,8 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
                     onClick={() => {
                       invalidate();
                       setSelected(o);
+                      setSchema(undefined);
+                      setInputReady(false);
                       setInput("{}");
                       setResult(undefined);
                     }}
@@ -925,24 +923,8 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
               )}
             />
           )}
-          <details>
-            <summary className="cursor-pointer text-sm text-muted-foreground">
-              {text("입력 필드", "Input fields")} (
-              {selected?.fields.length ?? 0})
-            </summary>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {selected?.fields.map((f) => (
-                <Badge variant="outline" key={f.name}>
-                  {f.name} · {f.type}
-                  {f.required ? " *" : ""}
-                </Badge>
-              ))}
-            </div>
-          </details>
           <div className="flex items-center justify-between">
-            <Label htmlFor="api-input">
-              {text("요청 JSON", "Request JSON")}
-            </Label>
+            <Label>{text("요청 옵션", "Request options")}</Label>
             <Button
               variant="outline"
               size="sm"
@@ -969,24 +951,32 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
               {text("입력 예시 생성", "Generate skeleton")}
             </Button>
           </div>
-          <Textarea
-            id="api-input"
-            className="mono min-h-64 text-xs leading-6"
-            spellCheck={false}
-            disabled={busy}
-            value={input}
-            onChange={(e) => {
-              invalidate();
-              setInput(e.target.value);
-            }}
-          />
+          {selected && (
+            <ApiRequestEditor
+              service={service}
+              operation={selected.name}
+              fields={selected.fields}
+              demo={ctx.demo}
+              input={input}
+              disabled={busy}
+              onSchema={setSchema}
+              onReady={setInputReady}
+              onChange={(value) => {
+                invalidate();
+                setInput(value);
+              }}
+            />
+          )}
           <p className="text-xs leading-5 text-muted-foreground">
             {text(
               "API 한 페이지씩 조회합니다. 다음 페이지는 응답 커서를 요청에 넣어 조회하세요. 입력 예시에서 불필요한 필드는 삭제하세요.",
               "One API page per request. Supply the response cursor for the next page. Remove unused skeleton fields.",
             )}
           </p>
-          <Button disabled={busy || !selected?.supported} onClick={prepare}>
+          <Button
+            disabled={busy || !selected?.supported || !inputReady}
+            onClick={prepare}
+          >
             {text("요청 검토", "Review request")}
           </Button>
           <ErrorPanel error={error} />
@@ -1061,6 +1051,12 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
                             "성공 · 응답 본문 없음",
                             "Success · empty response body",
                           ),
+                      );
+                      toast.success(
+                        text(
+                          "API 실행이 완료됐습니다.",
+                          "API request completed.",
+                        ),
                       );
                     })
                   }

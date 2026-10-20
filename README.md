@@ -26,7 +26,7 @@ resource data preserve their source language.
 - Sidebar favorites (up to eight), recent services (five), and category filters.
 - Settings: language, default region, table density, memory-cache clearing, session actions.
 - Full resource detail pages; EC2 Name tag, RDS backup retention and log retention editors.
-- Generic modeled API operations: input field schema, optional skeleton, JSON input,
+- Generic modeled API operations: option forms with required fields and AWS descriptions, optional skeleton, JSON editing,
   account-bound review and result viewer. Review expires after five minutes and is single-use.
 - API Runner links directly to the selected operation's AWS CLI reference for
   input options and examples. Desktop links open in the default browser; opener
@@ -85,7 +85,7 @@ cargo test --manifest-path src-tauri/Cargo.toml live_readonly -- --ignored --noc
 
 ## Validation
 
-- React/TypeScript/Vite build, 53 frontend regression tests and 12 Rust unit tests.
+- React/TypeScript/Vite build, 61 frontend regression tests and 13 Rust unit tests.
 - Live Rust integration: RDS, S3 and log group lists; S3 root and child folder;
   CloudWatch message bodies and the next page.
 - Desktop UI: real EC2/RDS/S3/log group lists.

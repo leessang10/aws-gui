@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SelectField, SelectOption } from "@/components/ui/select-field";
-import { ServiceIcon } from "./shared-ui";
+import { ServiceIcon, ErrorPanel } from "./shared-ui";
+import { toast } from "sonner";
 import {
   ReactFlow,
   Background,
@@ -107,7 +108,6 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
   const [layingOut, setLayingOut] = useState(false);
   const [exporting, setExporting] = useState(false);
   const [download, setDownload] = useState<{ url: string; filename: string }>();
-  const [saveStatus, setSaveStatus] = useState("");
   const [progress, setProgress] = useState("");
   const [error, setError] = useState("");
   const [selected, setSelected] = useState<InfraNode>();
@@ -240,7 +240,6 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
       setSelected(undefined);
       setFilter("");
       setDownload(undefined);
-      setSaveStatus("");
       setPickerOpen(false);
     } catch (e) {
       if (active()) setError(String(e));
@@ -323,7 +322,6 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
     if (!canvas.current || !nodes.length) return;
     setExporting(true);
     setDownload(undefined);
-    setSaveStatus("");
     setError("");
     try {
       const viewport = canvas.current.querySelector<HTMLElement>(
@@ -408,7 +406,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           format,
           bytes: Array.from(binary, (ch) => ch.charCodeAt(0)),
         });
-        setSaveStatus(
+        (saved ? toast.success : toast.info)(
           saved
             ? `${text("저장 완료", "Saved")}: ${saved}`
             : text("저장 취소", "Save cancelled"),
@@ -539,11 +537,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           PDF
         </Button>
       </div>
-      {error && !pickerOpen && (
-        <p role="alert" className="workspace-error">
-          {error}
-        </p>
-      )}
+      {!pickerOpen && <ErrorPanel error={error} />}
       {download && (
         <p>
           <a download={download.filename} href={download.url}>
@@ -551,7 +545,6 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           </a>
         </p>
       )}
-      {saveStatus && <p role="status">{saveStatus}</p>}
       <div role="status" className="topology-status">
         {busy
           ? `${text("조회 중", "Collecting")} · ${progress}`

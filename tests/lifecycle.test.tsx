@@ -156,6 +156,10 @@ test("region changes discard resource-specific drafts before another request", a
     expect(screen.getByLabelText("Profile")).toHaveTextContent("first"),
   );
   fireEvent.click(screen.getByRole("button", { name: "API Runner" }));
+  fireEvent.mouseDown(
+    await screen.findByRole("tab", { name: "JSON", exact: true }),
+    { button: 0, ctrlKey: false },
+  );
   const input = await screen.findByLabelText("Request JSON");
   fireEvent.change(input, {
     target: { value: '{"InstanceIds":["i-old-region"]}' },

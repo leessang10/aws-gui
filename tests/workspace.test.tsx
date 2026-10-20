@@ -26,6 +26,10 @@ const ctx: Context = {
 const operations = [
   { name: "describe-instances", readOnly: true, supported: true, fields: [] },
 ];
+const schema = {
+  root: "Input",
+  shapes: { Input: { type: "structure", members: {} } },
+};
 beforeEach(() => {
   invoke.mockReset();
 });
@@ -49,7 +53,9 @@ test("review never executes and editing invalidates the confirmation", async () 
     Promise.resolve(
       cmd === "service_operations"
         ? operations
-        : { id: "1", account: "123456789012", phrase: "confirm" },
+        : cmd === "api_input_schema"
+          ? schema
+          : { id: "1", account: "123456789012", phrase: "confirm" },
     ),
   );
   render(<ApiWorkbench ctx={ctx} route={{ kind: "api", service: "ec2" }} />);
@@ -64,6 +70,10 @@ test("review never executes and editing invalidates the confirmation", async () 
   expect(
     screen.getByRole("button", { name: "Execute reviewed request" }),
   ).toBeDisabled();
+  fireEvent.mouseDown(screen.getByRole("tab", { name: "JSON", exact: true }), {
+    button: 0,
+    ctrlKey: false,
+  });
   fireEvent.change(screen.getByLabelText("Request JSON"), {
     target: { value: '{"NextToken":"next"}' },
   });
@@ -74,7 +84,9 @@ test("late review cannot update a new context", async () => {
   invoke.mockImplementation((cmd) =>
     cmd === "service_operations"
       ? Promise.resolve(operations)
-      : new Promise((r) => (resolve = r)),
+      : cmd === "api_input_schema"
+        ? Promise.resolve(schema)
+        : new Promise((r) => (resolve = r)),
   );
   const view = render(
     <ApiWorkbench ctx={ctx} route={{ kind: "api", service: "ec2" }} />,
@@ -187,9 +199,11 @@ test("single-use execution is locked against duplicate clicks", async () => {
   invoke.mockImplementation((cmd) =>
     cmd === "service_operations"
       ? Promise.resolve(operations)
-      : cmd === "prepare_api"
-        ? Promise.resolve({ id: "single", account: "123", phrase: "confirm" })
-        : new Promise((r) => (finish = r)),
+      : cmd === "api_input_schema"
+        ? Promise.resolve(schema)
+        : cmd === "prepare_api"
+          ? Promise.resolve({ id: "single", account: "123", phrase: "confirm" })
+          : new Promise((r) => (finish = r)),
   );
   render(<ApiWorkbench ctx={ctx} route={{ kind: "api", service: "ec2" }} />);
   await waitFor(() =>

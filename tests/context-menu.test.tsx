@@ -1,6 +1,7 @@
 import { expect, test, vi } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { ContextActions, copyAction } from "../src/shared-ui";
+import { Notifications } from "../src/notifications";
 const open = () =>
   fireEvent.contextMenu(screen.getByRole("button", { name: "Resource" }), {
     clientX: 100,
@@ -83,13 +84,14 @@ test("clipboard actions use targeted values and surface denied permissions", asy
     value: { writeText },
   });
   render(
-    <ContextActions actions={[copyAction("Copy ID", "target-id")]}>
-      <button>Resource</button>
-    </ContextActions>,
+    <Notifications>
+      <ContextActions actions={[copyAction("Copy ID", "target-id")]}>
+        <button>Resource</button>
+      </ContextActions>
+    </Notifications>,
   );
   open();
   fireEvent.click(screen.getByRole("menuitem", { name: "Copy ID" }));
-  await screen.findByRole("alert");
+  await screen.findByText("Error: Clipboard denied");
   expect(writeText).toHaveBeenCalledWith("target-id");
-  expect(screen.getByRole("alert")).toHaveTextContent("Clipboard denied");
 });

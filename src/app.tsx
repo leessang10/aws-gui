@@ -31,6 +31,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { SelectField, SelectOption } from "@/components/ui/select-field";
+import { Notifications } from "./notifications";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -756,7 +757,9 @@ export default function App() {
         localStorage.setItem("orbit.collapsed", String(!v));
       }}
     >
-      <AppContent />
+      <Notifications>
+        <AppContent />
+      </Notifications>
     </SidebarProvider>
   );
 }
