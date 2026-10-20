@@ -26,10 +26,12 @@ type Props = {
   region: string;
   onRefresh: () => void;
   onCloseFocus?: () => void;
-  onLoad: (ids: Set<string>) => void;
+  includeConnected?: boolean;
+  onLoad: (ids: Set<string>, includeConnected: boolean) => void;
 };
 export function ResourcePicker(p: Props) {
   const [draft, setDraft] = useState(new Set<string>()),
+    [connected, setConnected] = useState(false),
     [query, setQuery] = useState(""),
     [limit, setLimit] = useState(100);
   const candidates = p.inventory ? topologyCandidates(p.inventory) : [],
@@ -37,6 +39,7 @@ export function ResourcePicker(p: Props) {
   useEffect(() => {
     if (p.open) {
       setDraft(new Set(p.selectedIds));
+      setConnected(p.includeConnected ?? false);
       setQuery("");
       setLimit(100);
     }
@@ -89,6 +92,14 @@ export function ResourcePicker(p: Props) {
             {text("새로고침", "Refresh")}
           </Button>
         </div>
+        <label className="flex items-center gap-2 text-sm">
+          <Checkbox
+            checked={connected}
+            disabled={p.busy}
+            onCheckedChange={(value) => setConnected(value === true)}
+          />
+          {text("연결된 리소스 함께 불러오기", "Include connected resources")}
+        </label>
         <ErrorPanel error={p.error} />
         {p.inventory?.warnings.length ? (
           <details className="text-xs text-muted-foreground">
@@ -200,7 +211,7 @@ export function ResourcePicker(p: Props) {
             </Button>
             <Button
               disabled={p.busy || !draft.size}
-              onClick={() => p.onLoad(new Set(draft))}
+              onClick={() => p.onLoad(new Set(draft), connected)}
             >
               {text("불러오기", "Load")} ({draft.size})
             </Button>

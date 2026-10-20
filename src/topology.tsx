@@ -97,6 +97,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
   const [inventory, setInventory] = useState<Inventory>();
   const [catalog, setCatalog] = useState<Inventory | undefined>(ctx.snapshot);
   const [pickerOpen, setPickerOpen] = useState(false);
+  const [includeConnected, setIncludeConnected] = useState(false);
   const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
   const [nodes, setNodes] = useState<Node<Data>[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
@@ -181,14 +182,14 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
       }
     }
   }
-  async function loadSelection(ids: Set<string>) {
+  async function loadSelection(ids: Set<string>, connected: boolean) {
     if (!catalog || busy) return;
     const generation = ++epoch.current;
     const active = () => generation === epoch.current;
     setBusy(true);
     setError("");
     try {
-      const subset = selectInventory(catalog, ids);
+      const subset = connected ? catalog : selectInventory(catalog, ids);
       const query = {
         service: "ec2",
         profile: ctx.profile,
@@ -223,7 +224,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           );
       if (!ctx.snapshot) await verify();
       if (!active()) return;
-      const graph = selectedTopology(loaded, ids);
+      const graph = selectedTopology(loaded, ids, connected);
       const visible = new Set(graph.nodes.map((n) => n.id));
       const missing = [...ids].filter((id) => !visible.has(id));
       if (missing.length)
@@ -235,6 +236,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
         );
       setInventory(loaded);
       setAppliedIds(ids);
+      setIncludeConnected(connected);
       setSelected(undefined);
       setFilter("");
       setDownload(undefined);
@@ -254,7 +256,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
     let active = true;
     setLayingOut(true);
     setError("");
-    const graph = selectedTopology(inventory, appliedIds);
+    const graph = selectedTopology(inventory, appliedIds, includeConnected);
     setGraphWarnings(graph.warnings);
     layoutTopology(graph, mode)
       .then((positions) => {
@@ -316,7 +318,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
     return () => {
       active = false;
     };
-  }, [inventory, mode, revision, appliedIds]);
+  }, [inventory, mode, revision, appliedIds, includeConnected]);
   async function exportImage(format: "png" | "pdf") {
     if (!canvas.current || !nodes.length) return;
     setExporting(true);
@@ -423,8 +425,9 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
   }
   const counts =
     inventory &&
-    Object.entries(inventory.items).filter(([k]) =>
-      ["instances", "databases", "loadBalancers", "targetGroups"].includes(k),
+    ["ec2", "rds", "elb", "target"].map(
+      (kind) =>
+        `${({ ec2: "EC2", rds: "RDS", elb: "ELB", target: "Target groups" } as Record<string, string>)[kind]} ${nodes.filter((n) => n.data.resource.kind === kind).length}`,
     );
   return (
     <div className="topology-page">
@@ -442,13 +445,14 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
         }}
         inventory={catalog}
         selectedIds={appliedIds}
+        includeConnected={includeConnected}
         busy={busy}
         progress={progress}
         error={error}
         profile={ctx.profile}
         region={ctx.region}
         onRefresh={() => void collect()}
-        onLoad={(ids) => void loadSelection(ids)}
+        onLoad={(ids, connected) => void loadSelection(ids, connected)}
       />
       <div className="page-heading">
         <div>
@@ -557,7 +561,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
             : exporting
               ? text("내보내는 중…", "Exporting…")
               : inventory
-                ? `${counts?.map(([k, v]) => `${({ instances: "EC2", databases: "RDS", loadBalancers: "ELB", targetGroups: "Target groups" } as Record<string, string>)[k]} ${v.length}`).join(" · ")} · S3 ${nodes.filter((n) => n.data.resource.kind === "s3").length} · ${new Date(inventory.collectedAt).toLocaleString()}`
+                ? `${counts?.join(" · ")} · S3 ${nodes.filter((n) => n.data.resource.kind === "s3").length} · ${new Date(inventory.collectedAt).toLocaleString()}`
                 : null}
       </div>
       {inventory && inventory.warnings.length + graphWarnings.length > 0 && (

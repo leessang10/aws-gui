@@ -82,7 +82,7 @@ cargo test --manifest-path src-tauri/Cargo.toml live_readonly -- --ignored --noc
 
 ## Validation
 
-- React/TypeScript/Vite build, 42 frontend regression tests and 12 Rust unit tests.
+- React/TypeScript/Vite build, 45 frontend regression tests and 12 Rust unit tests.
 - Live Rust integration: RDS, S3 and log group lists; S3 root and child folder;
   CloudWatch message bodies and the next page.
 - Desktop UI: real EC2/RDS/S3/log group lists.
@@ -133,8 +133,9 @@ Clipboard failures are reported instead of showing a false success message.
 
 Open **Infrastructure map** in the sidebar, select **Select resources**, search and check resources, then press **Load**.
 An empty search shows all discovered resources. Search changes preserve checked items; Cancel leaves the diagram unchanged.
-Only selected resources and their VPC/subnet ancestors are drawn. Edges require both endpoints to be included.
-Initial discovery fetches resource lists; relationship detail calls run only for the selected resources on Load.
+By default, only selected resources and their VPC/subnet ancestors are drawn. Edges require both endpoints to be included.
+Enable **Include connected resources** in the picker to follow confirmed relationships in either direction, including EC2 → target group → load balancer. Shared VPC/subnet membership alone does not expand the selection.
+Initial discovery fetches resource lists. On Load, relationship details are queried for selected resources, or across the catalog when connected resources are enabled so reverse relationships can be discovered. Existing collection limits and warnings apply.
 The selected profile and region are queried through fixed read-only CLI commands.
 React Flow renders VPC/subnet groups, EC2, RDS, ELBv2, target groups and S3.
 ELK.js automatically arranges the graph; nodes can also be dragged without changing AWS.

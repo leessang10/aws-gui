@@ -92,9 +92,32 @@ export function selectInventory(
 export function selectedTopology(
   inventory: Inventory,
   ids: ReadonlySet<string>,
+  includeConnected = false,
 ): InfraGraph {
-  const graph = buildTopology(inventory),
-    included = withParents(graph.nodes, ids);
+  const graph = buildTopology(inventory);
+  const roots = new Set(ids);
+  if (includeConnected) {
+    const neighbors = new Map<string, string[]>();
+    for (const edge of graph.edges) {
+      neighbors.set(edge.source, [
+        ...(neighbors.get(edge.source) ?? []),
+        edge.target,
+      ]);
+      neighbors.set(edge.target, [
+        ...(neighbors.get(edge.target) ?? []),
+        edge.source,
+      ]);
+    }
+    const queue = [...roots];
+    for (let i = 0; i < queue.length; i++)
+      for (const id of neighbors.get(queue[i]) ?? []) {
+        if (!roots.has(id)) {
+          roots.add(id);
+          queue.push(id);
+        }
+      }
+  }
+  const included = withParents(graph.nodes, roots);
   return {
     ...graph,
     nodes: graph.nodes.filter((n) => included.has(n.id)),

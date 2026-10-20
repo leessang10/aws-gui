@@ -162,7 +162,7 @@ test("checkboxes persist across searches; cancel does not load and load is expli
   expect(onOpenChange).toHaveBeenCalledWith(false);
   expect(onLoad).not.toHaveBeenCalled();
   fireEvent.click(screen.getByRole("button", { name: "Load (2)" }));
-  expect(onLoad).toHaveBeenCalledWith(new Set(["i1", "rds:database"]));
+  expect(onLoad).toHaveBeenCalledWith(new Set(["i1", "rds:database"]), false);
 });
 test("select-all respects the current search", () => {
   const onLoad = vi.fn();
@@ -186,5 +186,53 @@ test("select-all respects the current search", () => {
   });
   fireEvent.click(screen.getByRole("checkbox", { name: "Select all results" }));
   fireEvent.click(screen.getByRole("button", { name: "Load (2)" }));
-  expect(onLoad).toHaveBeenCalledWith(new Set(["i1", "i2"]));
+  expect(onLoad).toHaveBeenCalledWith(new Set(["i1", "i2"]), false);
+});
+
+test("connected option follows EC2 registration to target group and load balancer", () => {
+  const graph = selectedTopology(inv, new Set(["i1"]), true);
+  expect(graph.nodes.map((n) => n.id).sort()).toEqual([
+    "i1",
+    "lb1",
+    "s1",
+    "tg1",
+    "v1",
+  ]);
+  expect(graph.edges).toHaveLength(2);
+  expect(graph.nodes.some((n) => n.id === "rds:database")).toBe(false);
+});
+test("group containment alone does not imply connectivity", () => {
+  const graph = selectedTopology(inv, new Set(["v1"]), true);
+  expect(graph.nodes.map((n) => n.id)).toEqual(["v1"]);
+  expect(
+    selectedTopology(inv, new Set(["i1"]), false)
+      .nodes.map((n) => n.id)
+      .sort(),
+  ).toEqual(["i1", "s1", "v1"]);
+});
+test("connected option is opt-in and sent only on explicit load", () => {
+  const onLoad = vi.fn();
+  render(
+    <ResourcePicker
+      open
+      inventory={inv}
+      selectedIds={new Set(["i1"])}
+      busy={false}
+      progress=""
+      error=""
+      profile="test"
+      region="ap-northeast-2"
+      onRefresh={vi.fn()}
+      onLoad={onLoad}
+      onOpenChange={vi.fn()}
+    />,
+  );
+  const toggle = screen.getByRole("checkbox", {
+    name: "Include connected resources",
+  });
+  expect(toggle).not.toBeChecked();
+  fireEvent.click(toggle);
+  expect(onLoad).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole("button", { name: "Load (1)" }));
+  expect(onLoad).toHaveBeenCalledWith(new Set(["i1"]), true);
 });
