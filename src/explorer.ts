@@ -1,5 +1,6 @@
 import { invoke } from "@tauri-apps/api/core";
 import "./explorer.css";
+import { mergeRows } from "./pagination";
 import { t, locale, type Message } from "./i18n";
 
 type Row = Record<string, any>;
@@ -111,18 +112,11 @@ export function mountExplorer(root: HTMLElement, ctx: Context) {
             },
           });
       if (!root.isConnected || id !== generation) return;
-      const all = more ? [...rows, ...page.rows] : page.rows;
-      // Retries and live ingestion can overlap page boundaries.
-      rows = [
-        ...new Map(
-          all.map((row) => [
-            isS3
-              ? `${row.kind}:${row.Prefix ?? row.Key}`
-              : (row.eventId ?? JSON.stringify(row)),
-            row,
-          ]),
-        ).values(),
-      ];
+      rows = mergeRows(more ? rows : [], page.rows, (row) =>
+        isS3
+          ? String(row.kind) + ":" + String(row.Prefix ?? row.Key)
+          : String(row.eventId ?? JSON.stringify(row)),
+      );
       next = page.nextToken && page.nextToken !== token ? page.nextToken : null;
       shown = true;
     } catch (e) {

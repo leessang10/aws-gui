@@ -181,13 +181,32 @@ fn args_for(query: &Query) -> Result<Vec<String>, String> {
     Ok(args)
 }
 
+fn aws_executable() -> Result<std::path::PathBuf, String> {
+    #[cfg(windows)]
+    if let Some(program_files) = std::env::var_os("ProgramFiles") {
+        let installed = std::path::PathBuf::from(program_files).join("Amazon/AWSCLIV2/aws.exe");
+        if installed.is_absolute() && installed.is_file() {
+            return Ok(installed);
+        }
+    }
+    let name = if cfg!(windows) { "aws.exe" } else { "aws" };
+    if let Some(path) = std::env::var_os("PATH") {
+        for directory in std::env::split_paths(&path).filter(|p| p.is_absolute()) {
+            let candidate = directory.join(name);
+            if candidate.is_file() {
+                return Ok(candidate);
+            }
+        }
+    }
+    Err("AWS CLI was not found. Install AWS CLI v2 and restart Orbit.".into())
+}
+
 async fn execute(args: Vec<String>, runner: &Runner) -> Result<String, String> {
-    let _permit = runner
-        .0
-        .acquire()
+    let _permit = timeout(Duration::from_secs(5), runner.0.acquire())
         .await
+        .map_err(|_| "Too many pending requests. Try again shortly.")?
         .map_err(|_| "The command runner is closed.")?;
-    let mut command = Command::new("aws");
+    let mut command = Command::new(aws_executable()?);
     command
         .args(args)
         .env("AWS_PAGER", "")
@@ -301,6 +320,13 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[tokio::test]
+    async fn saturated_runner_has_a_bounded_wait() {
+        let runner = Runner(Arc::new(Semaphore::new(0)));
+        let result = timeout(Duration::from_secs(7), execute(vec![], &runner)).await;
+        assert!(result.unwrap().unwrap_err().contains("pending requests"));
+    }
+
     fn query(service: &str) -> Query {
         Query {
             service: service.into(),

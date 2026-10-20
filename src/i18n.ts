@@ -1,4 +1,6 @@
 const en = {
+  resultLimit:
+    "Display limit reached (5,000 rows or 8 MiB of text). Narrow the prefix or time/filter range, or refresh the list.",
   resources: "Resources",
   profile: "Profile",
   region: "Region",
@@ -100,6 +102,8 @@ const en = {
   unknown: "Unknown",
 };
 const ko: typeof en = {
+  resultLimit:
+    "표시 한도(5,000행 또는 텍스트 8 MiB)에 도달했습니다. 접두사·시간·필터 범위를 좁히거나 목록을 새로고침하세요.",
   resources: "리소스",
   profile: "프로필",
   region: "리전",

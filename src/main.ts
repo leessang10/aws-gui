@@ -9,6 +9,7 @@ import {
   type Language,
   type Message,
 } from "./i18n";
+import { mergeRows } from "./pagination";
 import { icon } from "./icons";
 
 type Service = "ec2" | "rds" | "s3" | "logs";
@@ -94,6 +95,7 @@ let collapsed = localStorage.getItem("orbit.sidebarCollapsed") === "true";
 let account = "";
 let accountBusy = false;
 let identityId = 0;
+let bootstrapId = 0;
 const esc = (value: unknown) =>
   String(value ?? "—").replace(
     /[&<>"']/g,
@@ -154,7 +156,7 @@ function resetView() {
   if (profile && (!saved || Date.now() - saved.updated > 30000)) void refresh();
 }
 async function refresh(more = false) {
-  if (!profile || busy) return;
+  if (!profile || busy || booting) return;
   const id = ++requestId;
   const cacheKey = key();
   busy = true;
@@ -172,11 +174,21 @@ async function refresh(more = false) {
           },
         });
     if (id !== requestId) return;
-    rows = more ? [...rows, ...page.rows] : page.rows;
-    nextToken = page.nextToken;
+    rows = mergeRows(more ? rows : [], page.rows, (row) =>
+      String(
+        row.InstanceId ??
+          row.DBInstanceIdentifier ??
+          row.Name ??
+          row.logGroupName ??
+          JSON.stringify(row),
+      ),
+    );
+    nextToken = more && page.nextToken === nextToken ? null : page.nextToken;
     updated = Date.now();
     selected = null;
+    cache.delete(cacheKey);
     cache.set(cacheKey, { rows, nextToken, updated });
+    if (cache.size > 12) cache.delete(cache.keys().next().value!);
   } catch (e) {
     if (id === requestId) error = String(e);
   } finally {
@@ -187,6 +199,20 @@ async function refresh(more = false) {
   }
 }
 async function init() {
+  const id = ++bootstrapId;
+  requestId++;
+  identityId++;
+  busy = false;
+  account = "";
+  accountBusy = false;
+  profile = "";
+  profiles = [];
+  cliVersion = "";
+  rows = [];
+  nextToken = null;
+  updated = 0;
+  selected = null;
+  cache.clear();
   booting = true;
   error = "";
   render();
@@ -199,14 +225,17 @@ async function init() {
       const result = await invoke<{ profiles: string[]; version: string }>(
         "bootstrap",
       );
+      if (id !== bootstrapId) return;
       profiles = result.profiles;
       cliVersion = result.version;
       const saved = localStorage.getItem("orbit.profile");
       profile = profiles.includes(saved || "") ? saved! : profiles[0] || "";
     } catch (e) {
+      if (id !== bootstrapId) return;
       error = String(e);
     }
   }
+  if (id !== bootstrapId) return;
   booting = false;
   render();
   // Real account queries start only when the user presses Refresh or changes context.
@@ -253,7 +282,7 @@ function render() {
       </header>
       <section class="content">
         ${demoMode ? `<div class="demo-banner">${t("preview")}</div>` : ""}
-        <div class="page-heading"><div><h1>${t(service)}</h1><p>${t(descriptions[service])}</p></div><button id="refresh" class="primary" ${busy || !profile ? "disabled" : ""}>${icon("refresh")} ${t(busy ? "loading" : "refresh")}</button></div>
+        <div class="page-heading"><div><h1>${t(service)}</h1><p>${t(descriptions[service])}</p></div><button id="refresh" class="primary" ${busy || booting || !profile ? "disabled" : ""}>${icon("refresh")} ${t(busy ? "loading" : "refresh")}</button></div>
         ${error ? `<div class="error" role="alert"><strong>${t("error")}</strong><pre>${esc(error)}</pre><p>${t("ssoHint")}</p><button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
         ${!profile && !booting && !error ? `<div class="error">${t("profileHelp")}<button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
         <section class="resource-panel">
@@ -330,12 +359,16 @@ function render() {
   document.querySelector<HTMLSelectElement>("#profile")!.onchange = (e) => {
     profile = (e.target as HTMLSelectElement).value;
     localStorage.setItem("orbit.profile", profile);
+    account = "";
+    cache.clear();
     resetView();
     void loadIdentity();
   };
   document.querySelector<HTMLInputElement>("#region")!.onchange = (e) => {
     region = (e.target as HTMLInputElement).value.trim();
     localStorage.setItem("orbit.region", region);
+    account = "";
+    cache.clear();
     resetView();
     void loadIdentity();
   };

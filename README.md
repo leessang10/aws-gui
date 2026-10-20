@@ -84,3 +84,13 @@ output and applies a 40-second request timeout. Credentials remain managed by
 AWS CLI. Resource bodies and logs are not persisted.
 
 See [design](docs/design.md) and [UI decisions](docs/ui-decisions.md).
+
+## Windows installer and quality checks
+
+Run `npm run check` for frontend regression tests and a production frontend build.
+Run `npm run tauri build` for the per-user Windows NSIS installer. The installer
+is currently unsigned. CI validates TypeScript, frontend tests, Rust tests,
+formatting and Clippy before packaging an artifact.
+
+See [release readiness](docs/release-readiness.md) for enforced runtime limits,
+validation commands and the remaining requirements for public distribution.
