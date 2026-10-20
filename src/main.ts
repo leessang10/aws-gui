@@ -598,6 +598,15 @@ function updateNavigation() {
       ];
     }),
   );
+  const mapButton = document.createElement("button");
+  mapButton.id = "nav-topology";
+  mapButton.className = `nav-item ${route.kind === "topology" ? "active" : ""}`;
+  mapButton.title = text("인프라 구조도", "Infrastructure map");
+  mapButton.innerHTML =
+    icon("topology") +
+    `<span>${text("인프라 구조도", "Infrastructure map")}</span>`;
+  mapButton.onclick = () => navigate({ kind: "topology" });
+  nav.querySelector("#nav-catalog")!.after(mapButton);
   bind("nav-catalog", () => navigate({ kind: "catalog" }));
   bind("nav-settings", () => navigate({ kind: "settings" }));
 }

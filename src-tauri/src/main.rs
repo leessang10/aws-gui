@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod topology;
 mod workbench;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
@@ -322,6 +323,8 @@ fn main() {
             list_resources,
             browse_resources,
             account_identity,
+            topology::topology_query,
+            topology::save_diagram,
             workbench::service_catalog,
             workbench::service_operations,
             workbench::set_advanced_enabled,

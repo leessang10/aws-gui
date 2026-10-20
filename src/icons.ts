@@ -1,4 +1,15 @@
 const paths: Record<string, string> = {
+  topology:
+    '<rect x="8" y="2" width="8" height="5"/><path d="M12 7v5M4 12h16M4 12v4m16-4v4"/><rect x="1" y="16" width="6" height="5"/><rect x="17" y="16" width="6" height="5"/>',
+  elb: '<path d="M3 12h6m0 0 6-7m-6 7 6 7m-6-7h9"/><circle cx="3" cy="12" r="2"/><rect x="16" y="2" width="5" height="5"/><rect x="18" y="10" width="5" height="5"/><rect x="16" y="17" width="5" height="5"/>',
+  lambda: '<path d="M5 3h5l8 18h4M8 10 2 21h6l3-6"/>',
+  sqs: '<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M6 9v6m6-6v6m6-6v6"/>',
+  sns: '<circle cx="5" cy="12" r="3"/><path d="m8 12 9-7m-9 7h9m-9 0 9 7"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="12" r="2"/><circle cx="19" cy="19" r="2"/>',
+  events:
+    '<path d="M3 6h18M3 12h18M3 18h18"/><circle cx="8" cy="6" r="2"/><circle cx="16" cy="12" r="2"/><circle cx="10" cy="18" r="2"/>',
+  ip: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c-6 5-6 13 0 18 6-5 6-13 0-18Z"/>',
+  targetResource:
+    '<circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/>',
   settings:
     '<circle cx="12" cy="12" r="3"/><path d="m9 3-1 3-3 1-2 3 2 2-1 3 3 2 3-1 2 3 3-1 1-3 3-1 2-3-2-2 1-3-3-2-3 1-2-3Z"/>',
   ec2: '<rect x="5" y="5" width="14" height="14" rx="1"/><path d="M9 1v4m6-4v4M9 19v4m6-4v4M1 9h4m-4 6h4m14-6h4m-4 6h4"/><rect x="9" y="9" width="6" height="6"/>',

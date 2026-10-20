@@ -122,3 +122,43 @@ Keyboard: use the Menu key or Shift+F10, arrows/Home/End to move, Enter/Space to
 activate and Escape to close. Input fields and selected text retain their native
 context menu. Menus close on outside click, scroll, resize or removal of the target.
 Clipboard failures are reported instead of showing a false success message.
+
+## Infrastructure map
+
+Open **Infrastructure map** in the sidebar and select **Collect infrastructure**.
+The selected profile and region are queried through fixed read-only CLI commands.
+React Flow renders VPC/subnet groups, EC2, RDS, ELBv2, target groups and S3.
+ELK.js automatically arranges the graph; nodes can also be dragged without changing AWS.
+Icon, simple and detailed views, resource search, an inspector and a minimap are included.
+
+Arrows represent configured associations, registered targets with health status,
+ELB access-log destinations and S3 notification destinations. They do not prove
+application traffic or network reachability. RDS instances are grouped by VPC;
+a DB subnet group is not treated as an instance's exact subnet. Classic ELB,
+security-group reachability and application configuration are outside this collector.
+Buckets in other regions are excluded unless referenced as a log destination.
+Buckets whose region cannot be read are marked unverified.
+
+Collection keeps partial results and reports permission errors and truncation.
+Each inventory query is capped at five CLI pages, relationship enrichment at 200
+resources, and diagrams at 1,000 nodes. Counts describe collected inventory.
+Changing profiles or leaving the page discards pending results. Account identity
+is checked before and after collection. Snapshots are not persisted automatically.
+
+PNG and PDF exports include the full diagram in the selected view, including
+manually adjusted positions. Desktop exports use a native Save dialog, with
+cancellation and filesystem errors reported. Browser exports provide a download
+link. Images are capped at 6,000 pixels per side and 16 megapixels; PDFs contain
+the rendered image on one custom-sized page, not editable vector nodes.
+The desktop saver accepts PNG/PDF signatures only and caps files at 24 MiB.
+Exports are the only files written by the diagram feature.
+
+The diagram and export libraries are loaded on demand. Open-source dependencies:
+React / React Flow (MIT), ELK.js (EPL-2.0), html-to-image (MIT), jsPDF (MIT),
+and rfd (MIT). See each package's distributed license.
+
+`tests/topology-browser.html` is an isolated synthetic browser test fixture,
+excluded from the production entry point. `docs/infrastructure-map.png` and
+`docs/infrastructure-export.png` show that fixture, not an AWS account.
+For a real read-only collector smoke test:
+`ORBIT_LIVE_PROFILE=<profile> ORBIT_LIVE_REGION=<region> cargo test --manifest-path src-tauri/Cargo.toml live_readonly_topology -- --ignored --nocapture`.

@@ -14,7 +14,7 @@ import {
 import { mountExplorer } from "./explorer";
 import "./workspace.css";
 export type WorkspaceRoute = {
-  kind: "resources" | "catalog" | "settings" | "api" | "detail";
+  kind: "resources" | "catalog" | "settings" | "api" | "detail" | "topology";
   service?: string;
   resource?: Record<string, any>;
   operation?: string;
@@ -58,6 +58,20 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
   };
   const on = (id: string, fn: () => void) =>
     root.querySelector<HTMLElement>(`#${id}`)?.addEventListener("click", fn);
+  if (ctx.route.kind === "topology") {
+    root.textContent = text(
+      "구조도 불러오는 중…",
+      "Loading infrastructure map…",
+    );
+    void import("./topology")
+      .then(({ mountTopology }) => {
+        if (live()) mountTopology(root, ctx);
+      })
+      .catch((e) => {
+        if (live()) root.textContent = String(e);
+      });
+    return;
+  }
   if (ctx.route.kind === "settings") {
     const p = readPreferences();
     root.innerHTML =
