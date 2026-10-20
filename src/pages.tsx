@@ -1,3 +1,4 @@
+import { useTheme, type ThemeMode } from "./theme";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ArrowLeft, Search, Star } from "lucide-react";
@@ -99,10 +100,7 @@ export function Catalog({
     <>
       <Heading
         title={text("전체 서비스", "All services")}
-        description={text(
-          "필요한 서비스를 찾고, 자주 쓰는 서비스는 즐겨찾기에 고정하세요.",
-          "Find a service and pin the ones you use most.",
-        )}
+        description={text("AWS 서비스 및 API", "AWS services and APIs")}
       />
       <div className="mb-5 flex gap-3">
         <div className="relative max-w-xl flex-1">
@@ -217,6 +215,7 @@ export function Settings({
   ctx: Context;
   onSave: (region: string) => void;
 }) {
+  const theme = useTheme();
   const [lang, setLang] = useState<Language>(language),
     [density, setDensity] = useState(readPreferences().density),
     [region, setRegion] = useState(ctx.region),
@@ -252,10 +251,24 @@ export function Settings({
           <CardHeader>
             <CardTitle>{text("표시", "Appearance")}</CardTitle>
           </CardHeader>
-          <CardContent className="grid gap-5 sm:grid-cols-2">
+          <CardContent className="grid gap-5 sm:grid-cols-3">
+            <div className="space-y-2">
+              <Label htmlFor="pref-theme">{text("테마", "Theme")}</Label>
+              <NativeSelect
+                id="pref-theme"
+                wrapperClassName="w-full"
+                value={theme.mode}
+                onChange={(e) => theme.setMode(e.target.value as ThemeMode)}
+              >
+                <option value="light">{text("라이트", "Light")}</option>
+                <option value="dark">{text("다크", "Dark")}</option>
+                <option value="system">{text("시스템", "System")}</option>
+              </NativeSelect>
+            </div>
             <div className="space-y-2">
               <Label htmlFor="pref-language">{text("언어", "Language")}</Label>
               <NativeSelect
+                wrapperClassName="w-full"
                 id="pref-language"
                 value={lang}
                 onChange={(e) => setLang(e.target.value as Language)}
@@ -269,6 +282,7 @@ export function Settings({
                 {text("목록 밀도", "Table density")}
               </Label>
               <NativeSelect
+                wrapperClassName="w-full"
                 id="pref-density"
                 value={density}
                 onChange={(e) => setDensity(e.target.value as typeof density)}
@@ -515,13 +529,7 @@ export function Details({ ctx, route }: { ctx: Context; route: Route }) {
         <ArrowLeft />
         {text("목록", "Resources")}
       </Button>
-      <Heading
-        title={id}
-        description={text(
-          "마지막 목록 조회 시점의 리소스 정보",
-          "Resource snapshot from the last list refresh",
-        )}
-      >
+      <Heading title={id} description={text("리소스 상세", "Resource details")}>
         <Button
           variant="outline"
           onClick={() => ctx.navigate({ kind: "api", service })}
@@ -966,18 +974,15 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
                 <JsonBlock value={reviewed} />
                 <p className="text-sm text-muted-foreground">
                   {ctx.demo
-                    ? text(
-                        "AWS에 연결되지 않아 요청을 실행할 수 없습니다.",
-                        "Connect to AWS to execute this request.",
-                      )
+                    ? text("AWS 연결을 확인하세요.", "AWS connection required.")
                     : selected?.readOnly
                       ? text(
                           "표시된 계정에서 조회 요청을 실행합니다.",
                           "Executes a read request in the displayed account.",
                         )
                       : text(
-                          "실제 리소스에 영향을 주며 비용이 발생할 수 있습니다. dry-run이 아닙니다.",
-                          "Affects real resources and may incur charges. This is not a dry run.",
+                          "리소스가 변경되며 비용이 발생할 수 있습니다.",
+                          "Changes resources and may incur charges.",
                         )}
                 </p>
                 <Label htmlFor="api-confirm">

@@ -125,13 +125,70 @@
   }
 }
 
+:root {
+  color-scheme: light;
+  --diagram-canvas: #fafbfc;
+  --diagram-node: #ffffff;
+  --diagram-node-border: #bdc7d5;
+  --diagram-group: #eef3f950;
+  --diagram-group-border: #849bb8;
+  --diagram-group-text: #324b69;
+  --diagram-subnet: #f0f7f450;
+  --diagram-subnet-border: #7b9e90;
+  --diagram-edge: #66788c;
+  --diagram-minimap-node: #c4cdd9;
+  --diagram-mask: #edf0f5aa;
+}
 .dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  color-scheme: dark;
+  --background: #15181e;
+  --foreground: #e2e7ef;
+  --card: #1b2028;
+  --card-foreground: #e2e7ef;
+  --popover: #222833;
+  --popover-foreground: #e2e7ef;
+  --primary: #dce6f7;
+  --primary-foreground: #192332;
+  --secondary: #272e39;
+  --secondary-foreground: #d6deeb;
+  --muted: #202630;
+  --muted-foreground: #a0adbf;
+  --accent: #283a52;
+  --accent-foreground: #b3d1ff;
+  --destructive: #ff8c92;
+  --border: #343e4c;
+  --input: #414e60;
+  --ring: #8fb7ee;
+  --sidebar: #191e26;
+  --sidebar-foreground: #bbc6d6;
+  --sidebar-primary: #b3d1ff;
+  --sidebar-primary-foreground: #192332;
+  --sidebar-accent: #283a52;
+  --sidebar-accent-foreground: #c2daff;
+  --sidebar-border: #343e4c;
+  --sidebar-ring: #8fb7ee;
+  --diagram-canvas: #141920;
+  --diagram-node: #242d39;
+  --diagram-node-border: #5b6b80;
+  --diagram-group: #24334770;
+  --diagram-group-border: #6a83a4;
+  --diagram-group-text: #c1d5ef;
+  --diagram-subnet: #203c3370;
+  --diagram-subnet-border: #699c89;
+  --diagram-edge: #9bacc4;
+  --diagram-minimap-node: #62778f;
+  --diagram-mask: #111722bb;
+}
+.page-heading {
+  flex-wrap: wrap;
+}
+[data-slot="table-head"],
+[data-slot="table-cell"] {
+  vertical-align: middle;
+}
+[data-slot="table-cell"] > button {
+  display: block;
+}
+[data-slot="native-select-wrapper"] {
+  flex-shrink: 0;
 }

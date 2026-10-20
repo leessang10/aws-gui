@@ -12,6 +12,7 @@ Uses your locally installed AWS CLI and existing profiles.
 - CloudWatch event bodies, stream names, time ranges, filter patterns and pagination.
 - Profile/region selection and an STS account number to distinguish accounts.
 - English and Korean interface, including explorer controls and dates.
+- Light, Dark and System themes, including infrastructure diagrams and exports.
 - Collapsible sidebar (`Ctrl+B`), persisted language and sidebar preferences.
 - In-memory list cache and local search over loaded rows.
 
@@ -81,7 +82,7 @@ cargo test --manifest-path src-tauri/Cargo.toml live_readonly -- --ignored --noc
 
 ## Validation
 
-- React/TypeScript/Vite build, 32 frontend regression tests and 12 Rust unit tests.
+- React/TypeScript/Vite build, 35 frontend regression tests and 12 Rust unit tests.
 - Live Rust integration: RDS, S3 and log group lists; S3 root and child folder;
   CloudWatch message bodies and the next page.
 - Desktop UI: real EC2/RDS/S3/log group lists.

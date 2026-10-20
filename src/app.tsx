@@ -1,3 +1,4 @@
+import { useTheme } from "./theme";
 import { lazy, Suspense, useEffect, useRef, useState } from "react";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import {
@@ -616,7 +617,8 @@ function AppContent() {
               </Label>
               <NativeSelect
                 id="profile"
-                className="w-[224px] bg-background text-xs"
+                className="bg-background text-xs"
+                wrapperClassName="w-full"
                 disabled={booting || demo}
                 value={profile}
                 onChange={(e) => {
@@ -739,6 +741,7 @@ function AppContent() {
   );
 }
 export default function App() {
+  useTheme();
   const [open, setOpen] = useState(
     localStorage.getItem("orbit.collapsed") !== "true",
   );

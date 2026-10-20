@@ -195,7 +195,6 @@ export default function Explorer(ctx: Props) {
               {t("go")}
             </Button>
           </form>
-          <p className="text-xs text-muted-foreground">{t("objectNotice")}</p>
         </>
       ) : (
         <>

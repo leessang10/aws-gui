@@ -31,7 +31,7 @@
   position: relative;
   flex: 1;
   min-width: 0;
-  background: #fafbfc;
+  background: var(--diagram-canvas);
 }
 .topology-inspector {
   width: 260px;
@@ -76,10 +76,10 @@
 .infra-card {
   width: 100%;
   height: 100%;
-  border: 1px solid #bdc7d5;
+  border: 1px solid var(--diagram-node-border);
   border-top: 3px solid #6c7e95;
   border-radius: 6px;
-  background: white;
+  background: var(--diagram-node);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -105,7 +105,7 @@
 }
 .infra-card small {
   font-size: 9px;
-  color: #536378;
+  color: var(--muted-foreground);
 }
 .infra-card.infra-ec2 {
   border-top-color: #c18124;
@@ -121,20 +121,20 @@
   border-top-color: #8e67a9;
 }
 .react-flow__node.infra-group {
-  background: #eef3f950;
-  border: 1px solid #849bb8;
+  background: var(--diagram-group);
+  border: 1px solid var(--diagram-group-border);
   border-radius: 8px;
   font-size: 12px;
   padding: 12px;
-  color: #324b69;
+  color: var(--diagram-group-text);
 }
 .react-flow__node.infra-subnet {
   border-style: dashed;
-  background: #f0f7f450;
-  border-color: #7b9e90;
+  background: var(--diagram-subnet);
+  border-color: var(--diagram-subnet-border);
 }
 .react-flow__node.selected .infra-card {
-  outline: 2px solid #245bc2;
+  outline: 2px solid var(--ring);
 }
 .react-flow__node-resource {
   border: 0;
@@ -153,4 +153,64 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.topology-toolbar {
+  display: grid;
+  grid-template-columns: 106px auto auto minmax(160px, 1fr) auto auto;
+  align-items: center;
+}
+.topology-toolbar > [data-slot="native-select-wrapper"] {
+  width: 100%;
+}
+.topology-toolbar input {
+  width: 100%;
+  min-width: 0;
+}
+.topology-toolbar button,
+.topology-toolbar select,
+.topology-toolbar input {
+  height: 36px;
+}
+.topology-body {
+  border-radius: 10px;
+  overflow: hidden;
+}
+.topology-inspector {
+  background: var(--card);
+}
+.topology-results button {
+  white-space: normal;
+  height: auto;
+  min-height: 36px;
+  justify-content: flex-start;
+}
+.topology-canvas {
+  --xy-background-color: var(--diagram-canvas);
+  --xy-node-color: var(--foreground);
+  --xy-edge-stroke: var(--diagram-edge);
+  --xy-edge-label-color: var(--foreground);
+  --xy-edge-label-background-color: var(--diagram-node);
+}
+.topology-canvas .react-flow__controls-button {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+  fill: currentColor;
+}
+.topology-canvas .react-flow__controls-button:hover {
+  background: var(--accent);
+}
+.topology-canvas .react-flow__minimap {
+  background: var(--diagram-canvas);
+  border: 1px solid var(--border);
+}
+@media (max-width: 1100px) {
+  .topology-toolbar {
+    grid-template-columns: 106px auto auto 1fr auto auto;
+  }
+  .topology-toolbar input {
+    grid-row: 2;
+    grid-column: 1/-1;
+  }
 }

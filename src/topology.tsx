@@ -1,3 +1,4 @@
+import { useTheme } from "./theme";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -90,6 +91,7 @@ function FitLayout({ version }: { version: number }) {
 }
 type Context = { profile: string; region: string; demo: boolean };
 export default function Topology(ctx: Context & { snapshot?: Inventory }) {
+  const { resolved } = useTheme();
   const [inventory, setInventory] = useState<Inventory | undefined>(
     ctx.snapshot,
   );
@@ -133,7 +135,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
         throw new Error(
           text(
             "AWS에 연결한 뒤 구조도를 조회하세요.",
-            "Connect to AWS to collect your infrastructure.",
+            "AWS connection required.",
           ),
         );
       const query = {
@@ -224,12 +226,15 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
             sourceHandle: e.relation === "access logs" ? "logs-out" : undefined,
             targetHandle: e.relation === "access logs" ? "logs-in" : undefined,
             data: { relation: e.relation },
-            markerEnd: { type: MarkerType.ArrowClosed },
+            markerEnd: {
+              type: MarkerType.ArrowClosed,
+              color: "var(--diagram-edge)",
+            },
             type: "smoothstep",
             pathOptions: { offset: 40 },
-            style: { stroke: "#66788c" },
-            labelStyle: { fontSize: 11, fill: "#334155" },
-            labelBgStyle: { fill: "#ffffff", fillOpacity: 1 },
+            style: { stroke: "var(--diagram-edge)" },
+            labelStyle: { fontSize: 11, fill: "var(--foreground)" },
+            labelBgStyle: { fill: "var(--diagram-node)", fillOpacity: 1 },
             labelBgPadding: [5, 3],
           })),
         );
@@ -280,7 +285,9 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
       const { toPng } = await import("html-to-image");
       await document.fonts.ready;
       const png = await toPng(viewport, {
-        backgroundColor: "#ffffff",
+        backgroundColor: getComputedStyle(canvas.current)
+          .getPropertyValue("--diagram-canvas")
+          .trim(),
         width: Math.ceil(width * scale),
         height: Math.ceil(height * scale),
         pixelRatio: 1,
@@ -309,6 +316,9 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           format: [w, h + 55],
           hotfixes: ["px_scaling"],
         });
+        pdf.setFillColor(resolved === "dark" ? "#141920" : "#fafbfc");
+        pdf.rect(0, 0, w, h + 55, "F");
+        pdf.setTextColor(resolved === "dark" ? "#e2e7ef" : "#24272d");
         pdf.setFontSize(10);
         pdf.text(
           `AWS ${inventory?.account} | ${ctx.region} | ${inventory?.collectedAt}`,
@@ -380,26 +390,19 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           </Button>
         )}
       </div>
-      <p className="topology-note">
-        {text(
-          "박스는 VPC·서브넷 소속, 화살표는 AWS 설정에서 확인한 관계입니다. 대상 그룹 연결은 등록 관계이며 실제 트래픽 전달을 보장하지 않습니다. EC2–RDS/S3의 애플리케이션 통신은 추정하지 않습니다.",
-          "Boxes show VPC/subnet membership; arrows show configured relationships. Target group links represent registration, not guaranteed traffic flow. Application traffic between EC2 and RDS/S3 is not inferred.",
-        )}
-      </p>
+
       <div className="topology-toolbar">
-        <label>
-          {text("보기", "View")}{" "}
-          <NativeSelect
-            aria-label={text("보기", "View")}
-            value={mode}
-            onChange={(e) => setMode(e.target.value as ViewMode)}
-            disabled={exporting}
-          >
-            <option value="icons">{text("아이콘만", "Icons")}</option>
-            <option value="simple">{text("간단히", "Simple")}</option>
-            <option value="detail">{text("상세", "Detailed")}</option>
-          </NativeSelect>
-        </label>
+        <NativeSelect
+          aria-label={text("보기", "View")}
+          value={mode}
+          onChange={(e) => setMode(e.target.value as ViewMode)}
+          disabled={exporting}
+        >
+          <option value="icons">{text("아이콘만", "Icons")}</option>
+          <option value="simple">{text("간단히", "Simple")}</option>
+          <option value="detail">{text("상세", "Detailed")}</option>
+        </NativeSelect>
+
         <Button
           variant="outline"
           className="quiet"
@@ -460,10 +463,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
               ? text("내보내는 중…", "Exporting…")
               : inventory
                 ? `${counts?.map(([k, v]) => `${({ instances: "EC2", databases: "RDS", loadBalancers: "ELB", targetGroups: "Target groups" } as Record<string, string>)[k]} ${v.length}`).join(" · ")} · S3 ${nodes.filter((n) => n.data.resource.kind === "s3").length} · ${new Date(inventory.collectedAt).toLocaleString()}`
-                : text(
-                    "구조도 조회를 눌러 현재 AWS 구성을 불러오세요.",
-                    "Collect infrastructure to load your AWS configuration.",
-                  )}
+                : text("조회된 구성 없음", "No infrastructure loaded.")}
       </div>
       {inventory && (
         <details className="topology-warnings">
@@ -485,6 +485,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
       <div className="topology-body">
         <div className="topology-canvas" ref={canvas}>
           <ReactFlow
+            colorMode={resolved}
             nodes={nodes}
             edges={edges}
             nodeTypes={nodeTypes}
@@ -504,7 +505,12 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
             <FitLayout version={layoutVersion} />
             <Background />
             <Controls showInteractive={false} />
-            <MiniMap pannable zoomable />
+            <MiniMap
+              pannable
+              zoomable
+              nodeColor="var(--diagram-minimap-node)"
+              maskColor="var(--diagram-mask)"
+            />
           </ReactFlow>
           {inventory && !busy && !layingOut && !nodes.length && (
             <div className="topology-empty">
@@ -573,22 +579,10 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
               <pre>{JSON.stringify(selected.raw, null, 2)}</pre>
             </>
           ) : (
-            <p>
-              {text(
-                "리소스를 선택하면 유형과 연결 관계를 볼 수 있습니다. 아이콘 보기에서는 이름을 검색하거나 아이콘에 마우스를 올려 확인하세요.",
-                "Select a resource to inspect its type and relationships. In icon view, search by name or hover over an icon.",
-              )}
-            </p>
+            <p>{text("선택한 리소스 없음", "No resource selected.")}</p>
           )}
         </aside>
       </div>
-      <small>
-        React Flow · ELK.js ·{" "}
-        {text(
-          "화면 배치 변경은 AWS 리소스에 영향을 주지 않습니다.",
-          "Moving nodes does not modify AWS resources.",
-        )}
-      </small>
     </div>
   );
 }
