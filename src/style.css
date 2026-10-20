@@ -121,7 +121,7 @@ button {
   box-shadow: inset 2px 0 #3267bd;
 }
 .sidebar-bottom {
-  margin-top: auto;
+  margin-top: 0;
   padding: 18px 10px;
   display: flex;
   justify-content: space-between;
@@ -163,16 +163,6 @@ main {
   display: flex;
   flex-direction: column;
 }
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  min-height: 66px;
-  border-bottom: 1px solid var(--line);
-  padding: 12px 28px;
-  background: #fff;
-}
 .connection-controls {
   display: flex;
   align-items: center;
@@ -201,14 +191,6 @@ input {
   font:
     12px Consolas,
     monospace;
-}
-.top-actions {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-.top-actions select {
-  font-size: 11px;
 }
 .account-id {
   font:
@@ -437,7 +419,7 @@ tbody tr:hover {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-top: auto;
+  margin-top: 0;
   border-top: 1px solid var(--line);
   padding: 6px 20px;
   font:
@@ -525,19 +507,11 @@ tbody tr:hover {
   white-space: nowrap;
 }
 @media (max-width: 1150px) {
-  .topbar {
-    flex-wrap: wrap;
-    gap: 10px;
-    padding: 12px 20px;
-  }
   .content {
     padding: 24px 20px;
   }
   .account-id {
     font-size: 10px;
-  }
-  .top-actions {
-    gap: 10px;
   }
   .connection-controls {
     gap: 12px;
@@ -554,4 +528,51 @@ tbody tr:hover {
     scroll-behavior: auto !important;
     animation: none !important;
   }
+}
+
+.sidebar-connection {
+  margin-top: auto;
+  padding: 16px 4px 0;
+  border-top: 1px solid var(--line);
+  flex-shrink: 0;
+}
+.sidebar-connection .connection-controls {
+  display: grid;
+  gap: 12px;
+}
+.sidebar-connection label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+.sidebar-connection select,
+.sidebar-connection input {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+.sidebar-connection .account-id {
+  display: block;
+  overflow-wrap: anywhere;
+  margin-top: 12px;
+  font-size: 10px;
+}
+#expand-connection {
+  display: none;
+}
+.collapsed .sidebar-connection {
+  padding: 12px 0;
+  display: flex;
+  justify-content: center;
+}
+.collapsed .sidebar-connection .connection-controls,
+.collapsed .sidebar-connection .account-id {
+  display: none;
+}
+.collapsed #expand-connection {
+  display: inline-grid;
+}
+.brand-row,
+.sidebar-bottom {
+  flex-shrink: 0;
 }

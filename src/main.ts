@@ -1,14 +1,7 @@
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import "./style.css";
 import { mountExplorer } from "./explorer";
-import {
-  t,
-  locale,
-  language,
-  setLanguage,
-  type Language,
-  type Message,
-} from "./i18n";
+import { t, locale, type Message } from "./i18n";
 import { mergeRows } from "./pagination";
 import { icon } from "./icons";
 import { mountWorkspace, text, type WorkspaceRoute } from "./workspace";
@@ -291,14 +284,11 @@ function render() {
       <div class="brand-row"><span class="brand">Orbit<span>AWS</span></span><button id="collapse" class="icon-button" aria-label="${t(collapsed ? "expand" : "collapse")}" title="${t(collapsed ? "expand" : "collapse")} (Ctrl+B)" aria-expanded="${!collapsed}">${icon("panel")}</button></div>
       <div class="nav-label">${t("resources")}</div>
       <nav>${(Object.keys(services) as Service[]).map((s) => `<button class="nav-item ${service === s ? "active" : ""}" data-service="${s}" title="${t(s)}" aria-label="${t(s)}" ${service === s ? 'aria-current="page"' : ""}>${icon(s)}<span>${t(s)}</span></button>`).join("")}</nav>
-      <div class="sidebar-bottom"><span>${t("cli")}</span><small>v0.1.0</small></div>
+      <div class="sidebar-connection"><button id="expand-connection" class="icon-button" aria-label="${t("profile")} / ${t("region")}" title="${esc(profile)} · ${esc(region)}">${icon("panel")}</button><div class="connection-controls"><label>${t("profile")}<select id="profile" ${demoMode || booting ? "disabled" : ""}>${profiles.length ? profiles.map((p) => `<option ${p === profile ? "selected" : ""}>${esc(p)}</option>`).join("") : `<option>${t("noProfiles")}</option>`}</select></label>
+        <label>${t("region")}<input id="region" aria-label="${t("region")}" value="${esc(region)}" list="regions" ${demoMode ? "disabled" : ""}><datalist id="regions">${["ap-northeast-2", "me-south-1", "ap-northeast-1", "us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"].map((r) => `<option value="${r}">`).join("")}</datalist></label></div><span class="account-id" title="${t("sameAccount")}">${demoMode ? "" : `${t("account")}: ${esc(account || t(accountBusy ? "identityLoading" : "identityUnavailable"))}`}</span></div><div class="sidebar-bottom"><span>${t("cli")}</span><small>v0.1.0</small></div>
     </aside>
     <main ${selected ? "inert" : ""}>
-      <header class="topbar">
-        <div class="connection-controls"><label>${t("profile")}<select id="profile" ${demoMode || booting ? "disabled" : ""}>${profiles.length ? profiles.map((p) => `<option ${p === profile ? "selected" : ""}>${esc(p)}</option>`).join("") : `<option>${t("noProfiles")}</option>`}</select></label>
-        <label>${t("region")}<input id="region" aria-label="${t("region")}" value="${esc(region)}" list="regions" ${demoMode ? "disabled" : ""}><datalist id="regions">${["ap-northeast-2", "me-south-1", "ap-northeast-1", "us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"].map((r) => `<option value="${r}">`).join("")}</datalist></label></div>
-        <div class="top-actions"><span class="account-id" title="${t("sameAccount")}">${demoMode ? "" : `${t("account")}: ${esc(account || t(accountBusy ? "identityLoading" : "identityUnavailable"))}`}</span><select id="language" aria-label="${t("language")}"><option value="ko" ${language === "ko" ? "selected" : ""}>한국어</option><option value="en" ${language === "en" ? "selected" : ""}>English</option></select></div>
-      </header>
+
       <section class="content">
 
         <div class="page-heading"><div><h1>${t(service)}</h1><p>${t(descriptions[service])}</p></div><button id="open-service-api" class="quiet">${text("API 작업대", "API workbench")}</button><button id="refresh" class="primary" ${busy || booting || !profile ? "disabled" : ""}>${icon("refresh")} ${t(busy ? "loading" : "refresh")}</button></div>
@@ -428,11 +418,10 @@ function render() {
     selected = null;
     render();
   });
-  document.querySelector<HTMLSelectElement>("#language")!.onchange = (e) => {
-    setLanguage((e.target as HTMLSelectElement).value as Language);
-    statusFilter = "all";
-    render();
-  };
+  bind("expand-connection", () => {
+    toggleSidebar();
+    document.querySelector<HTMLSelectElement>("#profile")?.focus();
+  });
   document.querySelector<HTMLSelectElement>("#profile")!.onchange = (e) => {
     profile = (e.target as HTMLSelectElement).value;
     localStorage.setItem("orbit.profile", profile);
