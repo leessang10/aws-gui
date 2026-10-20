@@ -280,3 +280,43 @@ summary {
 .page-heading > div:first-child {
   margin-right: auto;
 }
+.resource-actions {
+  margin: 20px 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 4px;
+}
+.resource-actions h2 {
+  margin-top: 0;
+  font-size: 15px;
+}
+.resource-actions p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+.action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.danger-action {
+  color: #a52f30;
+  border-color: #dcb6b6;
+}
+.action-form form {
+  margin-top: 18px;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+}
+.action-form label {
+  display: grid;
+  gap: 8px;
+  max-width: 420px;
+  margin-bottom: 16px;
+}
+.action-form button + button {
+  margin-left: 8px;
+}
+.action-form .action-error {
+  color: #a52f30;
+}

@@ -1,3 +1,4 @@
+import { mountResourceActions } from "./resource-actions";
 import { bindContextMenu, copyAction } from "./context-menu";
 import { invoke } from "@tauri-apps/api/core";
 import { language, setLanguage, type Language } from "./i18n";
@@ -237,7 +238,7 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
           "Resource details · snapshot from the last list refresh",
         ),
       ) +
-      `<div class="detail-actions">${button("open-api", text("API 작업대 열기", "Open API workbench"))}</div><dl class="resource-facts">${Object.entries(
+      `<div class="detail-actions">${button("open-api", text("API 작업대 열기", "Open API workbench"))}</div><div id="resource-actions"></div><dl class="resource-facts">${Object.entries(
         row,
       )
         .filter(([, v]) => v === null || typeof v !== "object")
@@ -276,6 +277,13 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
           ),
         ]);
       });
+    mountResourceActions(
+      root.querySelector<HTMLElement>("#resource-actions")!,
+      service,
+      row,
+      (operation, input) =>
+        ctx.navigate({ kind: "api", service, operation, input }),
+    );
     on("back-resource", () => ctx.navigate({ kind: "resources", service }));
     on("open-api", () => ctx.navigate({ kind: "api", service }));
     on("edit-review", () => {

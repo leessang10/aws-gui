@@ -304,7 +304,7 @@ function render() {
                   .map((c) => `<td class="mono">${esc(c)}</td>`)
                   .join(
                     "",
-                  )}<td><button class="row-open icon-button" data-row="${index}" aria-label="${esc(cols[0])} ${t("detail")}">${icon("arrow")}</button></td></tr>`,
+                  )}<td><button class="quiet" data-manage="${index}" aria-label="${esc(cols[0])} ${text("작업", "Actions")}">${text("작업", "Actions")}</button><button class="row-open icon-button" data-row="${index}" aria-label="${esc(cols[0])} ${t("detail")}">${icon("arrow")}</button></td></tr>`,
             )
             .join("")}</tbody></table></div>
           ${!visible.length ? `<div class="empty" role="status"><h2>${t(busy || booting ? "loading" : rows.length ? "noResults" : updated ? "empty" : "ready")}</h2><p>${t(rows.length ? "trySearch" : updated ? "checkContext" : "readyHelp")}</p></div>` : ""}
@@ -314,7 +314,7 @@ function render() {
       </section>
       <footer class="statusbar"><span title="${esc(cliVersion)}">${demoMode ? "" : esc(cliVersion ? cliVersion.split(" ")[0] : t("cliConnecting"))}</span></footer>
     </main>
-    ${selected ? `<div class="drawer-backdrop"><aside class="drawer ${service === "s3" || service === "logs" ? "explorer-drawer" : ""}" role="dialog" aria-modal="true" aria-label="${t("detail")}"><div class="drawer-heading"><span>${t(service === "s3" ? "s3Files" : service === "logs" ? "logEvents" : "detail")}</span><button id="close" class="icon-button" aria-label="${t("close")}">${icon("close")}</button></div><h2>${esc(cells(selected)[0])}</h2><button id="full-detail" class="quiet">${text("상세 페이지 · 수정", "Detail page · Edit")}</button>${service === "s3" || service === "logs" ? '<div id="detail-content"></div>' : `<p>${t("raw")}</p><pre tabindex="0">${esc(JSON.stringify(selected, null, 2))}</pre>`}</aside></div>` : ""}`;
+    ${selected ? `<div class="drawer-backdrop"><aside class="drawer ${service === "s3" || service === "logs" ? "explorer-drawer" : ""}" role="dialog" aria-modal="true" aria-label="${t("detail")}"><div class="drawer-heading"><span>${t(service === "s3" ? "s3Files" : service === "logs" ? "logEvents" : "detail")}</span><button id="close" class="icon-button" aria-label="${t("close")}">${icon("close")}</button></div><h2>${esc(cells(selected)[0])}</h2><button id="full-detail" class="quiet">${text("리소스 작업 · 상세", "Actions · Details")}</button>${service === "s3" || service === "logs" ? '<div id="detail-content"></div>' : `<p>${t("raw")}</p><pre tabindex="0">${esc(JSON.stringify(selected, null, 2))}</pre>`}</aside></div>` : ""}`;
   if (selected && (service === "s3" || service === "logs")) {
     mountExplorer(document.querySelector<HTMLElement>("#detail-content")!, {
       profile,
@@ -356,7 +356,7 @@ function render() {
         },
       },
       {
-        label: text("상세 페이지 · 수정", "Detail page · Edit"),
+        label: text("리소스 작업 · 상세", "Actions · Details"),
         run: () =>
           navigate({
             kind: "detail",
@@ -379,7 +379,7 @@ function render() {
       JSON.stringify(selected, null, 2),
     ),
     {
-      label: text("상세 페이지 · 수정", "Detail page · Edit"),
+      label: text("리소스 작업 · 상세", "Actions · Details"),
       run: () => document.getElementById("full-detail")?.click(),
     },
   ]);
@@ -400,6 +400,16 @@ function render() {
       run: toggleSidebar,
     },
   ]);
+  document
+    .querySelectorAll<HTMLButtonElement>("[data-manage]")
+    .forEach((button) => {
+      button.onclick = () =>
+        navigate({
+          kind: "detail",
+          service: service === "s3" ? "s3api" : service,
+          resource: rows[Number(button.dataset.manage)],
+        });
+    });
   bind("full-detail", () =>
     navigate({
       kind: "detail",
