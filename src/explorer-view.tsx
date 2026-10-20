@@ -3,7 +3,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { Folder, FileText, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { SelectField, SelectOption } from "@/components/ui/select-field";
 import { Label } from "@/components/ui/label";
 import {
   ContextActions,
@@ -207,10 +207,10 @@ export default function Explorer(ctx: Props) {
           >
             <div className="space-y-2">
               <Label htmlFor="log-range">{t("range")}</Label>
-              <NativeSelect
+              <SelectField
                 id="log-range"
                 value={hours}
-                onChange={(e) => setHours(Number(e.target.value))}
+                onValueChange={(value) => setHours(Number(value))}
               >
                 {[
                   [1, t("hour1")],
@@ -219,11 +219,11 @@ export default function Explorer(ctx: Props) {
                   [168, t("day7")],
                   [720, t("day30")],
                 ].map(([v, l]) => (
-                  <option key={v} value={v}>
+                  <SelectOption key={v} value={v}>
                     {l}
-                  </option>
+                  </SelectOption>
                 ))}
-              </NativeSelect>
+              </SelectField>
             </div>
             <div className="min-w-48 flex-1 space-y-2">
               <Label htmlFor="log-pattern">{t("pattern")}</Label>

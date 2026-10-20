@@ -82,7 +82,7 @@ cargo test --manifest-path src-tauri/Cargo.toml live_readonly -- --ignored --noc
 
 ## Validation
 
-- React/TypeScript/Vite build, 45 frontend regression tests and 12 Rust unit tests.
+- React/TypeScript/Vite build, 49 frontend regression tests and 12 Rust unit tests.
 - Live Rust integration: RDS, S3 and log group lists; S3 root and child folder;
   CloudWatch message bodies and the next page.
 - Desktop UI: real EC2/RDS/S3/log group lists.
@@ -170,6 +170,8 @@ and rfd (MIT). See each package's distributed license.
 The interface uses locally bundled Pretendard Variable 1.3.9 (SIL OFL 1.1),
 including diagram labels. Code and JSON retain monospace fonts. The font license
 is distributed at `public/licenses/Pretendard-OFL.txt`.
+All selection fields use shadcn Select (Radix), with themed popup menus, keyboard
+navigation and the same bundled font as the interface.
 
 `tests/topology-browser.html` is an isolated synthetic browser test fixture,
 excluded from the production entry point. `docs/infrastructure-map.png` and

@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, test, vi } from "vitest";
 import {
   render,
@@ -37,11 +38,12 @@ test("late resource response cannot replace the selected profile", async () => {
   );
   render(<App />);
   await waitFor(() =>
-    expect(screen.getByLabelText("Profile")).toHaveValue("first"),
+    expect(screen.getByLabelText("Profile")).toHaveTextContent("first"),
   );
-  fireEvent.change(screen.getByLabelText("Profile"), {
-    target: { value: "second" },
-  });
+  await userEvent.click(screen.getByLabelText("Profile"));
+  await userEvent.click(
+    screen.getByRole("option", { name: "second", exact: true }),
+  );
   await screen.findByText("i-new-account");
   await act(async () =>
     resolveOld({ rows: [{ InstanceId: "i-old-account" }], nextToken: null }),
@@ -137,7 +139,7 @@ test("region changes discard resource-specific drafts before another request", a
   );
   render(<App />);
   await waitFor(() =>
-    expect(screen.getByLabelText("Profile")).toHaveValue("first"),
+    expect(screen.getByLabelText("Profile")).toHaveTextContent("first"),
   );
   fireEvent.click(screen.getByRole("button", { name: "API workbench" }));
   const input = await screen.findByLabelText("Request JSON");

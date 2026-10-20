@@ -5,7 +5,7 @@ import { ArrowLeft, Search, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { NativeSelect } from "@/components/ui/native-select";
+import { SelectField, SelectOption } from "@/components/ui/select-field";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -116,12 +116,14 @@ export function Catalog({
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
-        <NativeSelect
+        <SelectField
           aria-label={text("분류", "Category")}
           value={group}
-          onChange={(e) => setGroup(e.target.value)}
+          onValueChange={(value) => setGroup(value)}
         >
-          <option value="">{text("전체 분류", "All categories")}</option>
+          <SelectOption value="">
+            {text("전체 분류", "All categories")}
+          </SelectOption>
           {[
             "Compute",
             "Storage",
@@ -133,9 +135,11 @@ export function Catalog({
             "Analytics",
             "Other",
           ].map((s) => (
-            <option key={s}>{s}</option>
+            <SelectOption key={s} value={s}>
+              {s}
+            </SelectOption>
           ))}
-        </NativeSelect>
+        </SelectField>
       </div>
       <ErrorPanel error={error} />
       <p className="mb-4 text-xs text-muted-foreground" role="status">
@@ -256,44 +260,50 @@ export function Settings({
           <CardContent className="grid gap-5 sm:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="pref-theme">{text("테마", "Theme")}</Label>
-              <NativeSelect
+              <SelectField
+                className="w-full"
                 id="pref-theme"
-                wrapperClassName="w-full"
                 value={theme.mode}
-                onChange={(e) => theme.setMode(e.target.value as ThemeMode)}
+                onValueChange={(value) => theme.setMode(value as ThemeMode)}
               >
-                <option value="light">{text("라이트", "Light")}</option>
-                <option value="dark">{text("다크", "Dark")}</option>
-                <option value="system">{text("시스템", "System")}</option>
-              </NativeSelect>
+                <SelectOption value="light">
+                  {text("라이트", "Light")}
+                </SelectOption>
+                <SelectOption value="dark">{text("다크", "Dark")}</SelectOption>
+                <SelectOption value="system">
+                  {text("시스템", "System")}
+                </SelectOption>
+              </SelectField>
             </div>
             <div className="space-y-2">
               <Label htmlFor="pref-language">{text("언어", "Language")}</Label>
-              <NativeSelect
-                wrapperClassName="w-full"
+              <SelectField
+                className="w-full"
                 id="pref-language"
                 value={lang}
-                onChange={(e) => setLang(e.target.value as Language)}
+                onValueChange={(value) => setLang(value as Language)}
               >
-                <option value="ko">한국어</option>
-                <option value="en">English</option>
-              </NativeSelect>
+                <SelectOption value="ko">한국어</SelectOption>
+                <SelectOption value="en">English</SelectOption>
+              </SelectField>
             </div>
             <div className="space-y-2">
               <Label htmlFor="pref-density">
                 {text("목록 밀도", "Table density")}
               </Label>
-              <NativeSelect
-                wrapperClassName="w-full"
+              <SelectField
+                className="w-full"
                 id="pref-density"
                 value={density}
-                onChange={(e) => setDensity(e.target.value as typeof density)}
+                onValueChange={(value) => setDensity(value as typeof density)}
               >
-                <option value="comfortable">
+                <SelectOption value="comfortable">
                   {text("기본", "Comfortable")}
-                </option>
-                <option value="compact">{text("촘촘하게", "Compact")}</option>
-              </NativeSelect>
+                </SelectOption>
+                <SelectOption value="compact">
+                  {text("촘촘하게", "Compact")}
+                </SelectOption>
+              </SelectField>
             </div>
           </CardContent>
         </Card>
@@ -389,7 +399,10 @@ export function Settings({
         </Card>
       </div>
       <div className="mt-5 flex max-w-4xl flex-wrap items-center justify-end gap-3 border-t pt-4">
-        <p role="status" className="min-w-0 flex-1 text-sm text-muted-foreground">
+        <p
+          role="status"
+          className="min-w-0 flex-1 text-sm text-muted-foreground"
+        >
           {status}
         </p>
         <Button type="submit" form="preferences-form">
@@ -457,19 +470,22 @@ export function ResourceActions({
                 <div className="space-y-2">
                   <Label htmlFor="action-value">{action.field.label}</Label>
                   {action.field.options ? (
-                    <NativeSelect
+                    <SelectField
                       id="action-value"
+                      placeholder={text("선택하세요", "Choose a value")}
                       required
                       value={value}
-                      onChange={(e) => setValue(e.target.value)}
+                      onValueChange={(value) => setValue(value)}
                     >
-                      <option value="">
+                      <SelectOption value="">
                         {text("선택하세요", "Choose a value")}
-                      </option>
+                      </SelectOption>
                       {action.field.options.map((o) => (
-                        <option key={o}>{o}</option>
+                        <SelectOption key={o} value={o}>
+                          {o}
+                        </SelectOption>
                       ))}
-                    </NativeSelect>
+                    </SelectField>
                   ) : (
                     <Input
                       id="action-value"
@@ -648,15 +664,16 @@ export function Details({ ctx, route }: { ctx: Context; route: Route }) {
                       onChange={(e) => setValue(e.target.value)}
                     />
                   ) : (
-                    <NativeSelect
+                    <SelectField
                       id="edit-value"
+                      placeholder={text("기간 선택", "Choose duration")}
                       required
                       value={value}
-                      onChange={(e) => setValue(e.target.value)}
+                      onValueChange={(value) => setValue(value)}
                     >
-                      <option value="">
+                      <SelectOption value="">
                         {text("기간 선택", "Choose duration")}
-                      </option>
+                      </SelectOption>
                       {(service === "rds"
                         ? Array.from({ length: 36 }, (_, n) => n)
                         : [
@@ -664,9 +681,11 @@ export function Details({ ctx, route }: { ctx: Context; route: Route }) {
                             545, 731, 1096, 1827, 2192, 2557, 2922, 3288, 3653,
                           ]
                       ).map((n) => (
-                        <option key={n}>{n}</option>
+                        <SelectOption key={n} value={n}>
+                          {n}
+                        </SelectOption>
                       ))}
-                    </NativeSelect>
+                    </SelectField>
                   )}
                   {service === "rds" && (
                     <p className="text-xs leading-6 text-muted-foreground">

@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import { expect, test, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ResourceActions } from "../src/pages";
@@ -54,7 +55,7 @@ test("cluster instances omit standalone lifecycle and snapshots", () => {
     }).map((a) => a.operation),
   ).toEqual(["reboot-db-instance"]);
 });
-test("versioning requires an explicit state and scopes the bucket", () => {
+test("versioning requires an explicit state and scopes the bucket", async () => {
   const review = vi.fn();
   render(
     <ResourceActions
@@ -66,9 +67,10 @@ test("versioning requires an explicit state and scopes the bucket", () => {
   fireEvent.click(screen.getByRole("button", { name: "Change versioning" }));
   fireEvent.click(screen.getByRole("button", { name: "Prepare and review" }));
   expect(review).not.toHaveBeenCalled();
-  fireEvent.change(screen.getByLabelText("Versioning status"), {
-    target: { value: "Suspended" },
-  });
+  await userEvent.click(screen.getByLabelText("Versioning status"));
+  await userEvent.click(
+    screen.getByRole("option", { name: "Suspended", exact: true }),
+  );
   fireEvent.click(screen.getByRole("button", { name: "Prepare and review" }));
   expect(review).toHaveBeenCalledWith("put-bucket-versioning", {
     Bucket: "selected-bucket",

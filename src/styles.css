@@ -4,7 +4,9 @@
 
 @custom-variant dark (&:is(.dark *));
 @theme inline {
-  --font-sans: "Pretendard Variable", Pretendard, "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+  --font-sans:
+    "Pretendard Variable", Pretendard, "Segoe UI", "Malgun Gothic", system-ui,
+    sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -190,12 +192,4 @@
 }
 [data-slot="table-cell"] > button {
   display: block;
-}
-[data-slot="native-select-wrapper"] {
-  flex-shrink: 0;
-}
-[data-slot="native-select"] option,
-[data-slot="native-select"] optgroup {
-  background-color: var(--popover);
-  color: var(--popover-foreground);
 }

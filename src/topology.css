@@ -160,7 +160,7 @@
   grid-template-columns: 106px auto auto minmax(160px, 1fr) auto auto;
   align-items: center;
 }
-.topology-toolbar > [data-slot="native-select-wrapper"] {
+.topology-toolbar > [data-slot="select-trigger"] {
   width: 100%;
 }
 .topology-toolbar input {
@@ -168,7 +168,7 @@
   min-width: 0;
 }
 .topology-toolbar button,
-.topology-toolbar select,
+.topology-toolbar [data-slot="select-trigger"],
 .topology-toolbar input {
   height: 36px;
 }

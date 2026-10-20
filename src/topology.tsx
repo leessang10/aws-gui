@@ -4,7 +4,7 @@ import { useTheme } from "./theme";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { NativeSelect } from "@/components/ui/native-select";
+import { SelectField, SelectOption } from "@/components/ui/select-field";
 import { ServiceIcon } from "./shared-ui";
 import {
   ReactFlow,
@@ -490,16 +490,16 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
       </div>
 
       <div className="topology-toolbar">
-        <NativeSelect
+        <SelectField
           aria-label={text("보기", "View")}
           value={mode}
-          onChange={(e) => setMode(e.target.value as ViewMode)}
+          onValueChange={(value) => setMode(value as ViewMode)}
           disabled={exporting}
         >
-          <option value="icons">{text("아이콘만", "Icons")}</option>
-          <option value="simple">{text("간단히", "Simple")}</option>
-          <option value="detail">{text("상세", "Detailed")}</option>
-        </NativeSelect>
+          <SelectOption value="icons">{text("아이콘만", "Icons")}</SelectOption>
+          <SelectOption value="simple">{text("간단히", "Simple")}</SelectOption>
+          <SelectOption value="detail">{text("상세", "Detailed")}</SelectOption>
+        </SelectField>
 
         <Button
           variant="outline"

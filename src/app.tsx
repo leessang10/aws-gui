@@ -30,7 +30,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { NativeSelect } from "@/components/ui/native-select";
+import { SelectField, SelectOption } from "@/components/ui/select-field";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -206,18 +206,20 @@ export function Resources({
             />
           </div>
           {(service === "ec2" || service === "rds") && (
-            <NativeSelect
+            <SelectField
               aria-label={t("state")}
               value={status}
-              onChange={(e) => setStatus(e.target.value)}
+              onValueChange={(value) => setStatus(value)}
             >
-              <option value="all">{t("allStates")}</option>
+              <SelectOption value="all">{t("allStates")}</SelectOption>
               {[...new Set(page.rows.map((r) => cells(service, r)[1]))].map(
                 (s) => (
-                  <option key={s}>{s}</option>
+                  <SelectOption key={s} value={s}>
+                    {s}
+                  </SelectOption>
                 ),
               )}
-            </NativeSelect>
+            </SelectField>
           )}
           <span className="text-xs text-muted-foreground">
             {filtered.length} {t("resources")}
@@ -615,26 +617,27 @@ function AppContent() {
               >
                 {t("profile")}
               </Label>
-              <NativeSelect
+              <SelectField
                 id="profile"
-                className="bg-background text-xs"
-                wrapperClassName="w-full"
+                className="w-full bg-background text-xs"
                 disabled={booting || demo}
                 value={profile}
-                onChange={(e) => {
-                  setProfile(e.target.value);
-                  localStorage.setItem("orbit.profile", e.target.value);
+                onValueChange={(value) => {
+                  setProfile(value);
+                  localStorage.setItem("orbit.profile", value);
                   if (route.kind === "detail" || route.kind === "api")
                     navigate(serviceRoute(route.service!));
                 }}
               >
                 {!profiles.length && (
-                  <option value="">{t("noProfiles")}</option>
+                  <SelectOption value="">{t("noProfiles")}</SelectOption>
                 )}
                 {profiles.map((p) => (
-                  <option key={p}>{p}</option>
+                  <SelectOption key={p} value={p}>
+                    {p}
+                  </SelectOption>
                 ))}
-              </NativeSelect>
+              </SelectField>
             </div>
             <div className="space-y-1.5">
               <Label

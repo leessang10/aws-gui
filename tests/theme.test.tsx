@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import { beforeEach, afterEach, expect, test, vi } from "vitest";
 import { render, screen, fireEvent, act } from "@testing-library/react";
 import { applyTheme, getThemeMode, setThemeMode, useTheme } from "../src/theme";
@@ -62,7 +63,7 @@ test("saved dark mode applies at startup and invalid preferences recover to syst
   applyTheme();
   expect(document.documentElement).not.toHaveClass("dark");
 });
-test("settings immediately persist the chosen mode and cross-window updates apply", () => {
+test("settings immediately persist the chosen mode and cross-window updates apply", async () => {
   render(
     <Settings
       ctx={{
@@ -75,15 +76,16 @@ test("settings immediately persist the chosen mode and cross-window updates appl
       onSave={vi.fn()}
     />,
   );
-  fireEvent.change(screen.getByLabelText("Theme"), {
-    target: { value: "dark" },
-  });
+  await userEvent.click(screen.getByLabelText("Theme"));
+  await userEvent.click(
+    screen.getByRole("option", { name: "Dark", exact: true }),
+  );
   expect(document.documentElement).toHaveClass("dark");
   expect(localStorage.getItem("orbit.theme")).toBe("dark");
   act(() => {
     localStorage.setItem("orbit.theme", "light");
     window.dispatchEvent(new StorageEvent("storage", { key: "orbit.theme" }));
   });
-  expect(screen.getByLabelText("Theme")).toHaveValue("light");
+  expect(screen.getByLabelText("Theme")).toHaveTextContent("Light");
   expect(document.documentElement).not.toHaveClass("dark");
 });

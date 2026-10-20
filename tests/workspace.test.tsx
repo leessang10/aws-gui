@@ -1,3 +1,4 @@
+import userEvent from "@testing-library/user-event";
 import { beforeEach, expect, test, vi } from "vitest";
 import {
   render,
@@ -143,9 +144,12 @@ test("RDS editor creates a scoped payload without immediate application", async 
     button: 0,
     ctrlKey: false,
   });
-  fireEvent.change(await screen.findByLabelText("Backup retention (days)"), {
-    target: { value: "14" },
-  });
+  await userEvent.click(
+    await screen.findByLabelText("Backup retention (days)"),
+  );
+  await userEvent.click(
+    screen.getByRole("option", { name: "14", exact: true }),
+  );
   fireEvent.click(screen.getByRole("button", { name: "Prepare change" }));
   expect(navigate).toHaveBeenCalledWith({
     kind: "api",
