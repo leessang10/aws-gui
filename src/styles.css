@@ -1,8 +1,10 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import "pretendard/dist/web/variable/pretendardvariable.css";
 
 @custom-variant dark (&:is(.dark *));
 @theme inline {
+  --font-sans: "Pretendard Variable", Pretendard, "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);
@@ -35,7 +37,7 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 :root {
-  font-family: "Segoe UI", "Malgun Gothic", system-ui, sans-serif;
+  font-family: var(--font-sans);
   --radius: 0.6rem;
   --background: #fff;
   --foreground: #24272d;

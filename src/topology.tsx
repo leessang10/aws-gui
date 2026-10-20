@@ -361,7 +361,6 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
         width: Math.ceil(width * scale),
         height: Math.ceil(height * scale),
         pixelRatio: 1,
-        skipFonts: true,
         style: {
           transform: `translate(${(40 - minX) * scale}px, ${(40 - minY) * scale}px) scale(${scale})`,
           transformOrigin: "0 0",

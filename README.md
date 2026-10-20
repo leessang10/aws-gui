@@ -167,6 +167,10 @@ The diagram and export libraries are loaded on demand. Open-source dependencies:
 React / React Flow (MIT), ELK.js (EPL-2.0), html-to-image (MIT), jsPDF (MIT),
 and rfd (MIT). See each package's distributed license.
 
+The interface uses locally bundled Pretendard Variable 1.3.9 (SIL OFL 1.1),
+including diagram labels. Code and JSON retain monospace fonts. The font license
+is distributed at `public/licenses/Pretendard-OFL.txt`.
+
 `tests/topology-browser.html` is an isolated synthetic browser test fixture,
 excluded from the production entry point. `docs/infrastructure-map.png` and
 `docs/infrastructure-export.png` show that fixture, not an AWS account.
