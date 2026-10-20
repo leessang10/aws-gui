@@ -3,6 +3,8 @@ name = "aws-gui"
 version = "0.1.0"
 description = "A lightweight local AWS workspace"
 edition = "2021"
+license = "MIT"
+repository = "https://github.com/leessang10/aws-gui"
 
 [features]
 custom-protocol = ["tauri/custom-protocol"]
