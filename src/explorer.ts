@@ -49,9 +49,9 @@ export function mountExplorer(root: HTMLElement, ctx: Context) {
       return {
         rows: [
           {
-            eventId: "demo",
+            eventId: "event-001",
             timestamp: Date.now(),
-            logStreamName: "demo-stream",
+            logStreamName: "stream-001",
             message:
               '{"level":"info","message":"Request completed","status":200}',
           },
@@ -154,7 +154,7 @@ export function mountExplorer(root: HTMLElement, ctx: Context) {
       [720, "day30"],
     ];
     root.innerHTML = `
-      <p class="explorer-context">${escape(ctx.profile)} · ${escape(ctx.region)} · ${t(ctx.demo ? "demoData" : "readOnly")}</p>
+      <p class="explorer-context">${escape(ctx.profile)} · ${escape(ctx.region)} · ${t("readOnly")}</p>
       ${
         isS3
           ? `<div class="explorer-toolbar"><button class="quiet" data-prefix="">${t("root")}</button>${crumbs}</div>

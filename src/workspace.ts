@@ -72,7 +72,7 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
       <label>${text("목록 밀도", "Table density")}<select id="pref-density"><option value="comfortable">${text("기본", "Comfortable")}</option><option value="compact" ${p.density === "compact" ? "selected" : ""}>${text("촘촘하게", "Compact")}</option></select></label></section>
       <section><h2>${text("연결", "Connection")}</h2><label>${text("기본 리전", "Default region")}<input id="pref-region" value="${esc(ctx.region)}" pattern="[a-z0-9-]+"></label><p>${text("인증 정보는 AWS CLI에서 관리합니다. 앱은 자격 증명 파일을 수정하지 않습니다.", "Credentials are managed by AWS CLI. Orbit does not edit credential files.")}</p>${button("save-preferences", text("설정 저장", "Save preferences"), "primary")}</section>
       <section><h2>${text("고급 API 작업", "Advanced API actions")}</h2><label class="check-label"><input id="pref-advanced" type="checkbox" ${advanced ? "checked" : ""} ${ctx.demo ? "disabled" : ""}>${text("이번 실행 세션에서 변경 가능한 API 허용", "Allow potentially mutating APIs for this session")}</label><p>${text("앱을 다시 시작하면 해제됩니다. 각 실행은 계정·리전·입력을 검토한 뒤 별도로 확인합니다.", "Disabled on app restart. Each execution requires reviewing the account, region and input, then confirming explicitly.")}</p></section>
-      <section><h2>${text("로컬 데이터", "Local data")}</h2><p>${text("즐겨찾기·언어·리전만 로컬에 저장됩니다. API 입력과 결과는 저장하지 않습니다.", "Only preferences and navigation history persist. API inputs and results are not saved.")}</p>${button("clear-cache", text("리소스 캐시 비우기", "Clear resource cache"))}</section></div><p id="settings-status" role="status"></p><pre tabindex="0" class="workspace-error" role="alert" hidden></pre>`;
+      <section><h2>${text("데이터 관리", "Data management")}</h2><p>${text("즐겨찾기·언어·리전 설정을 저장합니다. API 입력과 결과는 저장하지 않습니다.", "Only preferences and navigation history persist. API inputs and results are not saved.")}</p>${button("clear-cache", text("리소스 캐시 비우기", "Clear resource cache"))}</section></div><p id="settings-status" role="status"></p><pre tabindex="0" class="workspace-error" role="alert" hidden></pre>`;
     on("save-preferences", () => {
       const region = root
         .querySelector<HTMLInputElement>("#pref-region")!
@@ -125,7 +125,7 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
           "Find any service. Keep only your frequent services in the sidebar.",
         ),
       ) +
-      `<div class="catalog-toolbar"><input id="catalog-search" placeholder="${text("서비스 이름, CLI ID 검색…", "Search service name or CLI ID…")}" aria-label="${text("서비스 검색", "Search services")}"><select id="catalog-category" aria-label="${text("분류", "Category")}"><option value="">${text("전체 분류", "All categories")}</option>${["Compute", "Storage", "Database", "Security", "Management", "Network", "AI / ML", "Analytics", "Other"].map((s) => `<option>${s}</option>`).join("")}</select></div><p id="catalog-count" role="status">${text("로컬 CLI 모델을 읽는 중…", "Reading local CLI models…")}</p><div id="catalog-results"></div><pre tabindex="0" class="workspace-error" role="alert" hidden></pre>`;
+      `<div class="catalog-toolbar"><input id="catalog-search" placeholder="${text("서비스 이름, CLI ID 검색…", "Search service name or CLI ID…")}" aria-label="${text("서비스 검색", "Search services")}"><select id="catalog-category" aria-label="${text("분류", "Category")}"><option value="">${text("전체 분류", "All categories")}</option>${["Compute", "Storage", "Database", "Security", "Management", "Network", "AI / ML", "Analytics", "Other"].map((s) => `<option>${s}</option>`).join("")}</select></div><p id="catalog-count" role="status">${text("서비스를 불러오는 중…", "Loading services…")}</p><div id="catalog-results"></div><pre tabindex="0" class="workspace-error" role="alert" hidden></pre>`;
     let items: CatalogService[] = [];
     const draw = () => {
       const result = filterCatalog(
@@ -134,7 +134,7 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
         root.querySelector<HTMLSelectElement>("#catalog-category")!.value,
       );
       root.querySelector("#catalog-count")!.textContent =
-        `${result.length} / ${items.length} · ${ctx.demo ? text("미리보기 카탈로그", "Preview catalog") : text("설치된 CLI 서비스 모델", "Installed CLI service models")}`;
+        `${result.length} / ${items.length}`;
       const p = readPreferences();
       root.querySelector("#catalog-results")!.innerHTML =
         `<div class="catalog-grid">${result.map((s) => `<article class="service-card"><button class="service-title" data-open="${esc(s.id)}"><strong>${esc(s.id)}</strong><span>${esc(s.name)}</span></button><div><small>${esc(category(s.id))} · ${s.operations} APIs · ${native.includes(s.id) ? text("전용 화면", "Workspace") : text("API 작업대", "API workbench")}</small><button class="pin-button" data-pin="${esc(s.id)}" aria-label="${esc(s.id)} ${text("즐겨찾기", "favorite")}" aria-pressed="${p.favorites.includes(s.id)}">${p.favorites.includes(s.id) ? "★" : "☆"}</button></div></article>`).join("")}</div>`;
@@ -330,7 +330,7 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
           "Choose an operation and input, then review the target account and request.",
         ),
       ) +
-      `${ctx.demo ? `<div class="demo-banner">${text("미리보기는 샘플 작업만 표시합니다. 실제 데스크톱 앱은 설치된 CLI의 작업 전체를 불러옵니다.", "Preview shows sample operations only. The desktop app loads every operation from the installed CLI model.")}</div>` : ""}<div class="api-layout"><aside class="operation-list"><label>${text("작업 검색", "Find operation")}<input id="operation-search" placeholder="list, describe, update…"></label><div id="operations">${text("불러오는 중…", "Loading…")}</div></aside><section class="api-editor"><h2 id="operation-title">${text("작업 선택", "Select an operation")}</h2><p id="operation-kind"></p><div id="fields"></div><div class="editor-heading"><label for="api-input">${text("요청 JSON", "Request JSON")}</label>${button("skeleton", text("입력 예시 생성", "Generate skeleton"))}</div><textarea id="api-input" spellcheck="false" rows="13">${esc(JSON.stringify(ctx.route.input ?? {}, null, 2))}</textarea><p>${text("한 번에 API 한 페이지를 조회합니다. 다음 페이지는 응답의 커서를 요청 JSON에 넣어 조회하세요. 입력 예시의 불필요한 필드는 삭제하세요.", "One API page per request. Supply the returned cursor in your next request for pagination. Remove unused skeleton fields.")}</p>${button("prepare-api", text("요청 검토", "Review request"), "primary")}<pre tabindex="0" class="workspace-error" role="alert" hidden></pre><div id="api-review"></div><div id="api-result" aria-live="polite"></div></section></div>`;
+      `<div class="api-layout"><aside class="operation-list"><label>${text("작업 검색", "Find operation")}<input id="operation-search" placeholder="list, describe, update…"></label><div id="operations">${text("불러오는 중…", "Loading…")}</div></aside><section class="api-editor"><h2 id="operation-title">${text("작업 선택", "Select an operation")}</h2><p id="operation-kind"></p><div id="fields"></div><div class="editor-heading"><label for="api-input">${text("요청 JSON", "Request JSON")}</label>${button("skeleton", text("입력 예시 생성", "Generate skeleton"))}</div><textarea id="api-input" spellcheck="false" rows="13">${esc(JSON.stringify(ctx.route.input ?? {}, null, 2))}</textarea><p>${text("한 번에 API 한 페이지를 조회합니다. 다음 페이지는 응답의 커서를 요청 JSON에 넣어 조회하세요. 입력 예시의 불필요한 필드는 삭제하세요.", "One API page per request. Supply the returned cursor in your next request for pagination. Remove unused skeleton fields.")}</p>${button("prepare-api", text("요청 검토", "Review request"), "primary")}<pre tabindex="0" class="workspace-error" role="alert" hidden></pre><div id="api-review"></div><div id="api-result" aria-live="polite"></div></section></div>`;
     on("back-catalog", () => ctx.navigate({ kind: "catalog" }));
     const input = root.querySelector<HTMLTextAreaElement>("#api-input")!;
     const invalidate = () => {
@@ -491,7 +491,7 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
           if (!live() || epoch !== generation) return;
           review = value;
           root.querySelector("#api-review")!.innerHTML =
-            `<section class="review-panel"><h2>${text("실행 전 검토", "Review before execution")}</h2><dl><dt>${text("계정 / 프로필", "Account / profile")}</dt><dd>${esc(value.account)} / ${esc(ctx.profile)}</dd><dt>${text("리전 / 작업", "Region / operation")}</dt><dd>${esc(ctx.region)} / ${esc(service)} ${esc(operation)}</dd></dl><pre tabindex="0">${esc(reviewedInput)}</pre><p>${ctx.demo ? text("미리보기: 실제 AWS 작업은 실행하지 않습니다.", "Preview: no AWS operation will execute.") : text("변경 API는 실제 리소스에 영향을 주며 비용이 발생할 수 있습니다. 이 요청은 dry-run이 아닙니다.", "Mutation APIs affect real resources and may incur charges. This request is not a dry run.")}</p><label>${text("아래 문구를 입력하여 확인", "Type this phrase to confirm")}<code>${esc(value.phrase)}</code><input id="api-confirm" autocomplete="off" spellcheck="false"></label>${button("execute-api", text(ctx.demo ? "샘플 결과 보기" : "확인한 요청 실행", ctx.demo ? "Show sample result" : "Execute reviewed request"), "primary")}</section>`;
+            `<section class="review-panel"><h2>${text("실행 전 검토", "Review before execution")}</h2><dl><dt>${text("계정 / 프로필", "Account / profile")}</dt><dd>${esc(value.account)} / ${esc(ctx.profile)}</dd><dt>${text("리전 / 작업", "Region / operation")}</dt><dd>${esc(ctx.region)} / ${esc(service)} ${esc(operation)}</dd></dl><pre tabindex="0">${esc(reviewedInput)}</pre><p>${ctx.demo ? text("AWS에 연결되지 않아 요청을 실행할 수 없습니다.", "Connect to AWS to execute this request.") : text("변경 API는 실제 리소스에 영향을 주며 비용이 발생할 수 있습니다. 이 요청은 dry-run이 아닙니다.", "Mutation APIs affect real resources and may incur charges. This request is not a dry run.")}</p><label>${text("아래 문구를 입력하여 확인", "Type this phrase to confirm")}<code>${esc(value.phrase)}</code><input id="api-confirm" autocomplete="off" spellcheck="false"></label>${button("execute-api", text(ctx.demo ? "요청 확인" : "확인한 요청 실행", ctx.demo ? "Check request" : "Execute reviewed request"), "primary")}</section>`;
           const executeButton =
             root.querySelector<HTMLButtonElement>("#execute-api")!;
           executeButton.disabled = true;
@@ -517,7 +517,12 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
               ctx.demo
                 ? Promise.resolve(
                     JSON.stringify(
-                      { preview: true, service, operation },
+                      {
+                        executed: false,
+                        service,
+                        operation,
+                        reason: "AWS connection unavailable",
+                      },
                       null,
                       2,
                     ),
@@ -565,7 +570,7 @@ export function mountWorkspace(root: HTMLElement, ctx: Context) {
             lambda: "list-functions",
             sts: "get-caller-identity",
           }[service] ||
-            "sample-operation"),
+            "operation"),
         readOnly: !ctx.route.operation,
         supported: true,
         fields: Object.keys(ctx.route.input ?? {}).map((name) => ({

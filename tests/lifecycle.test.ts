@@ -12,24 +12,6 @@ beforeEach(() => {
   localStorage.clear();
   document.body.innerHTML = '<div id="app"></div>';
 });
-test("late bootstrap cannot replace demo context", async () => {
-  let resolve!: (v: unknown) => void;
-  invoke.mockImplementation(
-    () =>
-      new Promise((r) => {
-        resolve = r;
-      }),
-  );
-  await import("../src/main");
-  click("demo");
-  await tick();
-  resolve({ profiles: ["secret-company"], version: "aws-cli/2" });
-  await tick();
-  expect(document.querySelector("#profile")!.textContent).toContain(
-    "demo-workspace",
-  );
-  expect(document.body.textContent).not.toContain("secret-company");
-});
 test("late resource response cannot replace a newly selected profile", async () => {
   let resolve!: (v: unknown) => void;
   invoke.mockImplementation((cmd: string) => {

@@ -32,7 +32,7 @@ const services: Record<Service, true> = {
 const demo: Record<Service, Resource[]> = {
   ec2: [
     {
-      InstanceId: "i-demo001",
+      InstanceId: "i-001",
       Tags: [{ Key: "Name", Value: "woojoo-api-production" }],
       State: { Name: "running" },
       InstanceType: "t3.medium",
@@ -41,7 +41,7 @@ const demo: Record<Service, Resource[]> = {
       PublicIpAddress: "203.0.113.24",
     },
     {
-      InstanceId: "i-demo002",
+      InstanceId: "i-002",
       Tags: [{ Key: "Name", Value: "background-worker" }],
       State: { Name: "running" },
       InstanceType: "t3.small",
@@ -49,7 +49,7 @@ const demo: Record<Service, Resource[]> = {
       PrivateIpAddress: "10.0.3.12",
     },
     {
-      InstanceId: "i-demo003",
+      InstanceId: "i-003",
       Tags: [{ Key: "Name", Value: "staging-api" }],
       State: { Name: "stopped" },
       InstanceType: "t3.micro",
@@ -64,12 +64,12 @@ const demo: Record<Service, Resource[]> = {
       EngineVersion: "16.4",
       DBInstanceClass: "db.t3.micro",
       AvailabilityZone: "ap-northeast-2a",
-      Endpoint: { Address: "demo.example.invalid", Port: 5432 },
+      Endpoint: { Address: "endpoint.example.invalid", Port: 5432 },
     },
   ],
   s3: [
-    { Name: "woojoo-assets-demo", CreationDate: "2026-09-12T09:00:00Z" },
-    { Name: "woojoo-backups-demo", CreationDate: "2026-09-18T09:00:00Z" },
+    { Name: "woojoo-assets", CreationDate: "2026-09-12T09:00:00Z" },
+    { Name: "woojoo-backups", CreationDate: "2026-09-18T09:00:00Z" },
   ],
   logs: [
     {
@@ -97,7 +97,7 @@ let error = "";
 let updated = 0;
 let requestId = 0;
 let booting = true;
-let demoMode = !isTauri();
+const demoMode = !isTauri();
 let cliVersion = "";
 let collapsed = localStorage.getItem("orbit.sidebarCollapsed") === "true";
 let account = "";
@@ -231,9 +231,9 @@ async function init() {
   error = "";
   render();
   if (demoMode) {
-    profiles = ["demo-workspace"];
+    profiles = ["workspace"];
     profile = profiles[0];
-    cliVersion = "미리보기 · 샘플 데이터";
+    cliVersion = "";
   } else {
     try {
       const result = await invoke<{ profiles: string[]; version: string }>(
@@ -297,10 +297,10 @@ function render() {
       <header class="topbar">
         <div class="connection-controls"><label>${t("profile")}<select id="profile" ${demoMode || booting ? "disabled" : ""}>${profiles.length ? profiles.map((p) => `<option ${p === profile ? "selected" : ""}>${esc(p)}</option>`).join("") : `<option>${t("noProfiles")}</option>`}</select></label>
         <label>${t("region")}<input id="region" aria-label="${t("region")}" value="${esc(region)}" list="regions" ${demoMode ? "disabled" : ""}><datalist id="regions">${["ap-northeast-2", "me-south-1", "ap-northeast-1", "us-east-1", "us-west-2", "eu-west-1", "ap-southeast-1"].map((r) => `<option value="${r}">`).join("")}</datalist></label></div>
-        <div class="top-actions"><span class="account-id" title="${t("sameAccount")}">${demoMode ? t("demoData") : `${t("account")}: ${esc(account || t(accountBusy ? "identityLoading" : "identityUnavailable"))}`}</span><select id="language" aria-label="${t("language")}"><option value="ko" ${language === "ko" ? "selected" : ""}>한국어</option><option value="en" ${language === "en" ? "selected" : ""}>English</option></select></div>
+        <div class="top-actions"><span class="account-id" title="${t("sameAccount")}">${demoMode ? "" : `${t("account")}: ${esc(account || t(accountBusy ? "identityLoading" : "identityUnavailable"))}`}</span><select id="language" aria-label="${t("language")}"><option value="ko" ${language === "ko" ? "selected" : ""}>한국어</option><option value="en" ${language === "en" ? "selected" : ""}>English</option></select></div>
       </header>
       <section class="content">
-        ${demoMode ? `<div class="demo-banner">${t("preview")}</div>` : ""}
+
         <div class="page-heading"><div><h1>${t(service)}</h1><p>${t(descriptions[service])}</p></div><button id="open-service-api" class="quiet">${text("API 작업대", "API workbench")}</button><button id="refresh" class="primary" ${busy || booting || !profile ? "disabled" : ""}>${icon("refresh")} ${t(busy ? "loading" : "refresh")}</button></div>
         ${error ? `<div class="error" role="alert"><strong>${t("error")}</strong><pre tabindex="0">${esc(error)}</pre><p>${t("ssoHint")}</p><button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
         ${!profile && !booting && !error ? `<div class="error">${t("profileHelp")}<button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
@@ -322,7 +322,7 @@ function render() {
         </section>
         <div class="list-status"><span>${t("readOnly")} · ${service === "s3" ? t("accountWide") : esc(region)}</span><span>${updated ? `${t("updated")} ${new Date(updated).toLocaleTimeString(locale(), { hour12: false })}` : t("notLoaded")}</span></div>
       </section>
-      <footer class="statusbar"><span title="${esc(cliVersion)}">${esc(cliVersion ? (demoMode ? t("demoData") : cliVersion.split(" ")[0]) : t("cliConnecting"))}</span>${isTauri() ? `<button id="demo" class="text-button">${t(demoMode ? "live" : "demo")}</button>` : ""}</footer>
+      <footer class="statusbar"><span title="${esc(cliVersion)}">${demoMode ? "" : esc(cliVersion ? cliVersion.split(" ")[0] : t("cliConnecting"))}</span></footer>
     </main>
     ${selected ? `<div class="drawer-backdrop"><aside class="drawer ${service === "s3" || service === "logs" ? "explorer-drawer" : ""}" role="dialog" aria-modal="true" aria-label="${t("detail")}"><div class="drawer-heading"><span>${t(service === "s3" ? "s3Files" : service === "logs" ? "logEvents" : "detail")}</span><button id="close" class="icon-button" aria-label="${t("close")}">${icon("close")}</button></div><h2>${esc(cells(selected)[0])}</h2><button id="full-detail" class="quiet">${text("상세 페이지 · 수정", "Detail page · Edit")}</button>${service === "s3" || service === "logs" ? '<div id="detail-content"></div>' : `<p>${t("raw")}</p><pre tabindex="0">${esc(JSON.stringify(selected, null, 2))}</pre>`}</aside></div>` : ""}`;
   if (selected && (service === "s3" || service === "logs")) {
@@ -358,7 +358,7 @@ function render() {
       row.logGroupName;
     bindContextMenu(el, () => [
       {
-        label: text("미리보기 열기", "Open preview"),
+        label: text("빠른 보기", "Quick view"),
         run: () => {
           selected = row;
           render();
@@ -383,19 +383,16 @@ function render() {
       },
     ]);
   });
-  bindContextMenu(
-    document.querySelector<HTMLElement>(".drawer"),
-    () => [
-      copyAction(
-        text("리소스 JSON 복사", "Copy resource JSON"),
-        JSON.stringify(selected, null, 2),
-      ),
-      {
-        label: text("상세 페이지 · 수정", "Detail page · Edit"),
-        run: () => document.getElementById("full-detail")?.click(),
-      },
-    ],
-  );
+  bindContextMenu(document.querySelector<HTMLElement>(".drawer"), () => [
+    copyAction(
+      text("리소스 JSON 복사", "Copy resource JSON"),
+      JSON.stringify(selected, null, 2),
+    ),
+    {
+      label: text("상세 페이지 · 수정", "Detail page · Edit"),
+      run: () => document.getElementById("full-detail")?.click(),
+    },
+  ]);
   bindContextMenu(app, () => [
     {
       label: text("전체 서비스", "All services"),
@@ -430,20 +427,6 @@ function render() {
   bind("close", () => {
     selected = null;
     render();
-  });
-  bind("demo", () => {
-    requestId++;
-    busy = false;
-    cache.clear();
-    rows = [];
-    updated = 0;
-    nextToken = null;
-    selected = null;
-    search = "";
-    statusFilter = "all";
-    route = { kind: "resources" };
-    demoMode = !demoMode;
-    void init();
   });
   document.querySelector<HTMLSelectElement>("#language")!.onchange = (e) => {
     setLanguage((e.target as HTMLSelectElement).value as Language);

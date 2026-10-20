@@ -453,15 +453,6 @@ tbody tr:hover {
   color: var(--muted);
   text-decoration: underline;
 }
-.demo-banner {
-  background: #f5f7fb;
-  border: 1px solid #dbe2ee;
-  padding: 10px 12px;
-  border-radius: 4px;
-  font-size: 11px;
-  color: #55677f;
-  margin-bottom: 22px;
-}
 .error {
   border-left: 3px solid #b54f42;
   background: #fff4f1;

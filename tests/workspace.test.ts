@@ -114,7 +114,9 @@ test("preview execution never calls AWS IPC", async () => {
   field.dispatchEvent(new Event("input"));
   root.querySelector<HTMLButtonElement>("#execute-api")!.click();
   await tick();
-  expect(root.querySelector("#api-result")!.textContent).toContain("preview");
+  expect(root.querySelector("#api-result")!.textContent).toContain(
+    "AWS connection unavailable",
+  );
   expect(invoke).not.toHaveBeenCalled();
 });
 
