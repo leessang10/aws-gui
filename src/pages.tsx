@@ -234,9 +234,11 @@ export function Settings({
       />
       <ErrorPanel error={error} />
       <form
+        id="preferences-form"
         className="grid max-w-4xl gap-5"
         onSubmit={(e) => {
           e.preventDefault();
+          setError("");
           if (!/^[a-z0-9-]{1,64}$/.test(region))
             return setError(
               text("리전 형식을 확인하세요.", "Enter a valid region."),
@@ -319,9 +321,6 @@ export function Settings({
             />
           </CardContent>
         </Card>
-        <div>
-          <Button>{text("설정 저장", "Save preferences")}</Button>
-        </div>
       </form>
       <div className="mt-5 grid max-w-4xl gap-5">
         <Card>
@@ -389,9 +388,14 @@ export function Settings({
           </CardContent>
         </Card>
       </div>
-      <p role="status" className="mt-4 text-sm text-muted-foreground">
-        {status}
-      </p>
+      <div className="mt-5 flex max-w-4xl flex-wrap items-center justify-end gap-3 border-t pt-4">
+        <p role="status" className="min-w-0 flex-1 text-sm text-muted-foreground">
+          {status}
+        </p>
+        <Button type="submit" form="preferences-form">
+          {text("설정 저장", "Save preferences")}
+        </Button>
+      </div>
     </>
   );
 }

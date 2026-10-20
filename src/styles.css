@@ -192,3 +192,8 @@
 [data-slot="native-select-wrapper"] {
   flex-shrink: 0;
 }
+[data-slot="native-select"] option,
+[data-slot="native-select"] optgroup {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+}
