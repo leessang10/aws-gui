@@ -82,7 +82,7 @@ cargo test --manifest-path src-tauri/Cargo.toml live_readonly -- --ignored --noc
 
 ## Validation
 
-- React/TypeScript/Vite build, 49 frontend regression tests and 12 Rust unit tests.
+- React/TypeScript/Vite build, 50 frontend regression tests and 12 Rust unit tests.
 - Live Rust integration: RDS, S3 and log group lists; S3 root and child folder;
   CloudWatch message bodies and the next page.
 - Desktop UI: real EC2/RDS/S3/log group lists.

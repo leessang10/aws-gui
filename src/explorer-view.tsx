@@ -319,7 +319,7 @@ export default function Explorer(ctx: Props) {
       </div>
       {busy ? (
         <Loading />
-      ) : !rows.length ? (
+      ) : !error && !rows.length ? (
         <p className="py-6 text-center text-muted-foreground">
           {t(isS3 ? "noObjects" : "noEvents")}
         </p>

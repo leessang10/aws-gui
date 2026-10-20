@@ -221,6 +221,9 @@ async fn execute_with_attempts(
         .args(args)
         .env("AWS_PAGER", "")
         .env("AWS_CLI_AUTO_PROMPT", "off")
+        // Windows locale output (e.g. CP949) is not UTF-8. Preserve Unicode
+        // resource names and log messages at the CLI boundary, without lossy decoding.
+        .env("AWS_CLI_OUTPUT_ENCODING", "UTF-8")
         .env("AWS_MAX_ATTEMPTS", attempts)
         .stdin(std::process::Stdio::null())
         .stdout(std::process::Stdio::piped())
@@ -407,6 +410,45 @@ mod tests {
         assert_eq!(page.rows.len(), 2);
         assert_eq!(page.rows[0]["kind"], "folder");
         assert_eq!(page.next_token.as_deref(), Some("next"));
+    }
+
+    #[test]
+    #[ignore = "requires ORBIT_LIVE_PROFILE, ORBIT_LIVE_REGION and ORBIT_LIVE_BUCKET; read-only"]
+    fn live_readonly_s3_unicode_output() {
+        let mut q = browse("objects");
+        q.profile = std::env::var("ORBIT_LIVE_PROFILE").expect("set ORBIT_LIVE_PROFILE");
+        q.region = std::env::var("ORBIT_LIVE_REGION").expect("set ORBIT_LIVE_REGION");
+        q.resource = std::env::var("ORBIT_LIVE_BUCKET").expect("set ORBIT_LIVE_BUCKET");
+        q.prefix = None;
+        q.next_token = None;
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .unwrap()
+            .block_on(async {
+                let runner = Runner(Arc::new(Semaphore::new(1)));
+                let raw = execute(browse_args(&q).unwrap(), &runner).await.unwrap();
+                let page = browse_page("objects", serde_json::from_str(&raw).unwrap());
+                assert!(
+                    !raw.contains('\u{fffd}'),
+                    "response contains replacement characters"
+                );
+                println!(
+                    "S3 root: {} entries, Unicode: {}",
+                    page.rows.len(),
+                    !raw.is_ascii()
+                );
+                if let Some(folder) = page
+                    .rows
+                    .iter()
+                    .find(|r| r["Prefix"].as_str().is_some_and(|s| !s.is_ascii()))
+                {
+                    q.prefix = folder["Prefix"].as_str().map(str::to_owned);
+                    let child = execute(browse_args(&q).unwrap(), &runner).await.unwrap();
+                    let child_page = browse_page("objects", serde_json::from_str(&child).unwrap());
+                    println!("Unicode folder: {} entries", child_page.rows.len());
+                }
+            });
     }
     #[test]
     fn empty_log_page_can_have_more_results_and_time_range_is_bounded() {

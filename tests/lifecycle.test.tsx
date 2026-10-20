@@ -91,6 +91,20 @@ test("S3 pagination retains prefix and deduplicates objects", async () => {
     nextToken: "same",
   });
 });
+test("S3 lookup failure does not report an empty folder and can be retried", async () => {
+  invoke
+    .mockRejectedValueOnce(new Error("AWS lookup failed"))
+    .mockResolvedValueOnce({
+      rows: [{ kind: "file", Key: "한글 파일.txt", Size: 1 }],
+      nextToken: null,
+    });
+  render(<Explorer {...ctx} service="s3" resource="bucket" />);
+  await screen.findByText(/AWS lookup failed/);
+  expect(screen.queryByText("No files or folders at this path.")).toBeNull();
+  fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
+  await screen.findByText("한글 파일.txt");
+  expect(screen.queryByText(/AWS lookup failed/)).toBeNull();
+});
 test("log paging freezes time and filter until apply", async () => {
   invoke.mockResolvedValue({
     rows: [
