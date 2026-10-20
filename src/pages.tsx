@@ -1,4 +1,5 @@
 import { useTheme, type ThemeMode } from "./theme";
+import { AwsDocsLink } from "./aws-docs";
 import { useEffect, useRef, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { ArrowLeft, Search, Star } from "lucide-react";
@@ -155,7 +156,7 @@ export function Catalog({
                 run: () => ctx.navigate(serviceRoute(s.id)),
               },
               {
-                label: text("API 작업대", "API workbench"),
+                label: text("API 실행", "API Runner"),
                 run: () => ctx.navigate({ kind: "api", service: s.id }),
               },
               {
@@ -554,7 +555,7 @@ export function Details({ ctx, route }: { ctx: Context; route: Route }) {
           variant="outline"
           onClick={() => ctx.navigate({ kind: "api", service })}
         >
-          {text("API 작업대", "API workbench")}
+          {text("API 실행", "API Runner")}
         </Button>
       </Heading>
       <Tabs defaultValue="overview">
@@ -831,7 +832,7 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
         {text("전체 서비스", "All services")}
       </Button>
       <Heading
-        title={service}
+        title={`${service} · ${text("API 실행", "API Runner")}`}
         description={text(
           "작업과 입력을 선택한 뒤 대상 계정과 요청을 검토하세요.",
           "Choose an operation and input, then review the account and request.",
@@ -895,7 +896,7 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
           </div>
         </aside>
         <section className="min-w-0 space-y-4">
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-lg font-semibold">
               {selected?.name ?? text("작업 선택", "Select an operation")}
             </h2>
@@ -907,6 +908,14 @@ export function ApiWorkbench({ ctx, route }: { ctx: Context; route: Route }) {
                 )}
               </Badge>
             )}
+            <div className="ml-auto">
+              <AwsDocsLink
+                service={service}
+                operation={selected?.name}
+                desktop={!ctx.demo}
+                onError={setError}
+              />
+            </div>
           </div>
           {selected && !selected.supported && (
             <ErrorPanel

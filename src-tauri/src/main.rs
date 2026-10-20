@@ -319,6 +319,7 @@ async fn account_identity(query: Query, runner: tauri::State<'_, Runner>) -> Res
 
 fn main() {
     tauri::Builder::default()
+        .plugin(tauri_plugin_opener::init())
         .manage(Runner(Arc::new(Semaphore::new(3))))
         .manage(workbench::Workbench::default())
         .invoke_handler(tauri::generate_handler![

@@ -184,7 +184,7 @@ export function Resources({
           variant="outline"
           onClick={() => ctx.navigate({ kind: "api", service: apiService })}
         >
-          {text("API 작업대", "API workbench")}
+          {text("API 실행", "API Runner")}
         </Button>
         <Button disabled={busy || !ctx.profile} onClick={() => refresh()}>
           <RefreshCw className={busy ? "animate-spin" : ""} />
@@ -485,7 +485,7 @@ function AppContent() {
           ...(next.service
             ? [
                 {
-                  label: text("API 작업대", "API workbench"),
+                  label: text("API 실행", "API Runner"),
                   run: () => navigate({ kind: "api", service: next.service }),
                 },
                 copyAction(

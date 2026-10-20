@@ -164,7 +164,7 @@ fn validate(q: &ApiQuery) -> Result<Vec<String>, String> {
     let m = model(&q.service)?;
     let op = operation(&m, &q.operation)?;
     if !supported(&m, op) {
-        return Err("Binary and streaming operations need a dedicated adapter and are not supported in the JSON workbench.".into());
+        return Err("Binary and streaming operations need a dedicated adapter and are not supported in the API Runner.".into());
     }
     let input = q.input.as_object().ok_or("Input must be a JSON object")?;
     if q.input.to_string().len() > 1024 * 1024 {

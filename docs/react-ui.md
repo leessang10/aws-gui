@@ -3,7 +3,7 @@
 The app uses one React 19 root, TypeScript, shadcn/ui (Radix), Tailwind CSS 4 and Lucide. Rust commands and AWS CLI execution policy are unchanged.
 
 - `app.tsx`: shell, profile/region context, bounded resource cache and resource lists.
-- `pages.tsx`: service catalog, settings, details, guided actions and API workbench.
+- `pages.tsx`: service catalog, settings, details, guided actions and API Runner.
 - `explorer-view.tsx`: paginated S3 browsing and CloudWatch events.
 - `shared-ui.tsx`: headings, errors, JSON viewer, context menus and service icons.
 - `components/ui`: checked-in shadcn components; customize these rather than adding a second UI system.

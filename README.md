@@ -16,7 +16,7 @@ Uses your locally installed AWS CLI and existing profiles.
 - Collapsible sidebar (`Ctrl+B`), persisted language and sidebar preferences.
 - In-memory list cache and local search over loaded rows.
 
-The four resource browsers are read-only. The API workbench supports real changes
+The four resource browsers are read-only. The API Runner supports real changes
 only after enabling advanced actions for the current session and reviewing the
 account, region, operation and exact input. Every execution requires a matching
 confirmation phrase. AWS service/API charges can apply. CLI diagnostics and
@@ -28,6 +28,9 @@ resource data preserve their source language.
 - Full resource detail pages; EC2 Name tag, RDS backup retention and log retention editors.
 - Generic modeled API operations: input field schema, optional skeleton, JSON input,
   account-bound review and result viewer. Review expires after five minutes and is single-use.
+- API Runner links directly to the selected operation's AWS CLI reference for
+  input options and examples. Desktop links open in the default browser; opener
+  permission is limited to the official AWS CLI reference URL path.
 
 Binary/streaming APIs and custom CLI commands such as S3 sync require separate
 adapters. File upload/download and object content previews remain unsupported.
@@ -82,7 +85,7 @@ cargo test --manifest-path src-tauri/Cargo.toml live_readonly -- --ignored --noc
 
 ## Validation
 
-- React/TypeScript/Vite build, 50 frontend regression tests and 12 Rust unit tests.
+- React/TypeScript/Vite build, 53 frontend regression tests and 12 Rust unit tests.
 - Live Rust integration: RDS, S3 and log group lists; S3 root and child folder;
   CloudWatch message bodies and the next page.
 - Desktop UI: real EC2/RDS/S3/log group lists.
