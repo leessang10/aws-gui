@@ -1,3 +1,5 @@
+import { ResourcePicker } from "./topology-picker";
+import { selectInventory, selectedTopology } from "./topology-selection";
 import { useTheme } from "./theme";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -23,7 +25,7 @@ import { invoke, isTauri } from "@tauri-apps/api/core";
 import { language } from "./i18n";
 
 import {
-  buildTopology,
+  hydrateTopology,
   collectTopology,
   type Inventory,
   type InfraNode,
@@ -92,9 +94,10 @@ function FitLayout({ version }: { version: number }) {
 type Context = { profile: string; region: string; demo: boolean };
 export default function Topology(ctx: Context & { snapshot?: Inventory }) {
   const { resolved } = useTheme();
-  const [inventory, setInventory] = useState<Inventory | undefined>(
-    ctx.snapshot,
-  );
+  const [inventory, setInventory] = useState<Inventory>();
+  const [catalog, setCatalog] = useState<Inventory | undefined>(ctx.snapshot);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [appliedIds, setAppliedIds] = useState<Set<string>>(new Set());
   const [nodes, setNodes] = useState<Node<Data>[]>([]);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [graphWarnings, setGraphWarnings] = useState<string[]>([]);
@@ -113,6 +116,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
   const [flow, setFlow] = useState<any>();
   const epoch = useRef(0);
   const canvas = useRef<HTMLDivElement>(null);
+  const pickerTrigger = useRef<HTMLButtonElement>(null);
   useEffect(
     () => () => {
       epoch.current++;
@@ -124,12 +128,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
     const active = () => generation === epoch.current;
     setBusy(true);
     setError("");
-    setSelected(undefined);
-    setDownload(undefined);
-    setSaveStatus("");
-    setInventory(undefined);
-    setNodes([]);
-    setEdges([]);
+
     try {
       if (ctx.demo)
         throw new Error(
@@ -159,6 +158,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
         (value) => {
           if (active()) setProgress(value);
         },
+        false,
       );
       const after = await invoke<{ Account: string }>("account_identity", {
         query,
@@ -171,7 +171,75 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
             "AWS account changed during collection. Collect again.",
           ),
         );
-      setInventory(collected);
+      setCatalog(collected);
+    } catch (e) {
+      if (active()) setError(String(e));
+    } finally {
+      if (active()) {
+        setBusy(false);
+        setProgress("");
+      }
+    }
+  }
+  async function loadSelection(ids: Set<string>) {
+    if (!catalog || busy) return;
+    const generation = ++epoch.current;
+    const active = () => generation === epoch.current;
+    setBusy(true);
+    setError("");
+    try {
+      const subset = selectInventory(catalog, ids);
+      const query = {
+        service: "ec2",
+        profile: ctx.profile,
+        region: ctx.region,
+      };
+      const verify = async () => {
+        const identity = await invoke<{ Account: string }>("account_identity", {
+          query,
+        });
+        if (identity.Account !== catalog.account)
+          throw new Error(
+            text(
+              "AWS 계정이 변경되었습니다. 목록을 새로고침하세요.",
+              "AWS account changed. Refresh the resource list.",
+            ),
+          );
+      };
+      if (!ctx.snapshot) await verify();
+      if (!active()) return;
+      const loaded = ctx.snapshot
+        ? { ...subset, details: ctx.snapshot.details }
+        : await hydrateTopology(
+            subset,
+            (kind, resource, nextToken) =>
+              invoke("topology_query", {
+                query: { ...query, kind, resource, nextToken },
+              }),
+            active,
+            (value) => {
+              if (active()) setProgress(value);
+            },
+          );
+      if (!ctx.snapshot) await verify();
+      if (!active()) return;
+      const graph = selectedTopology(loaded, ids);
+      const visible = new Set(graph.nodes.map((n) => n.id));
+      const missing = [...ids].filter((id) => !visible.has(id));
+      if (missing.length)
+        loaded.warnings.push(
+          text(
+            `${missing.length}개 리소스를 현재 리전에 표시할 수 없습니다.`,
+            `${missing.length} selected resources are unavailable in this region.`,
+          ),
+        );
+      setInventory(loaded);
+      setAppliedIds(ids);
+      setSelected(undefined);
+      setFilter("");
+      setDownload(undefined);
+      setSaveStatus("");
+      setPickerOpen(false);
     } catch (e) {
       if (active()) setError(String(e));
     } finally {
@@ -186,7 +254,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
     let active = true;
     setLayingOut(true);
     setError("");
-    const graph = buildTopology(inventory);
+    const graph = selectedTopology(inventory, appliedIds);
     setGraphWarnings(graph.warnings);
     layoutTopology(graph, mode)
       .then((positions) => {
@@ -248,7 +316,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
     return () => {
       active = false;
     };
-  }, [inventory, mode, revision]);
+  }, [inventory, mode, revision, appliedIds]);
   async function exportImage(format: "png" | "pdf") {
     if (!canvas.current || !nodes.length) return;
     setExporting(true);
@@ -360,6 +428,28 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
     );
   return (
     <div className="topology-page">
+      <ResourcePicker
+        onCloseFocus={() => pickerTrigger.current?.focus()}
+        open={pickerOpen}
+        onOpenChange={(open) => {
+          setPickerOpen(open);
+          if (!open) {
+            epoch.current++;
+            setBusy(false);
+            setProgress("");
+            setError("");
+          }
+        }}
+        inventory={catalog}
+        selectedIds={appliedIds}
+        busy={busy}
+        progress={progress}
+        error={error}
+        profile={ctx.profile}
+        region={ctx.region}
+        onRefresh={() => void collect()}
+        onLoad={(ids) => void loadSelection(ids)}
+      />
       <div className="page-heading">
         <div>
           <h1>{text("인프라 구조도", "Infrastructure map")}</h1>
@@ -371,10 +461,15 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
         <Button
           variant="outline"
           className="primary"
-          onClick={collect}
-          disabled={busy || !ctx.profile}
+          onClick={() => {
+            setPickerOpen(true);
+            setError("");
+            if (!catalog) void collect();
+          }}
+          ref={pickerTrigger}
+          disabled={busy || exporting || layingOut || !ctx.profile}
         >
-          {text("구조도 조회", "Collect infrastructure")}
+          {text("리소스 선택", "Select resources")}
         </Button>
         {busy && (
           <Button
@@ -441,7 +536,7 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           PDF
         </Button>
       </div>
-      {error && (
+      {error && !pickerOpen && (
         <p role="alert" className="workspace-error">
           {error}
         </p>

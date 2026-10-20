@@ -23,3 +23,9 @@ Settings → Appearance → Theme provides Light, Dark and System. System is the
 The same semantic tokens cover controls, tables, sheets, menus and the infrastructure canvas. Diagram nodes, groups, edges, labels, controls and minimap follow the active theme. PNG and PDF exports capture that theme, including the PDF header. Theme changes do not rerun AWS queries or reset diagram positions.
 
 The diagram toolbar uses a 36px control height and a common grid row. Search moves to a separate row at narrower widths. Settings selects occupy equal-width columns; sidebar profile and region controls share the same width.
+
+## Infrastructure selection
+
+The infrastructure view starts with an empty canvas. Select resources opens a searchable checkbox dialog; an empty query displays every discovered candidate. Search matches name, ID, kind and descriptive metadata. Selections survive filter changes, select-all applies to the current result set, and cancel leaves the prior diagram untouched. Reopening restores the last applied selection.
+
+List discovery uses the existing bounded, read-only collector without relationship jobs. Loading takes a subset of those lists, adds only containment ancestors, then hydrates relationship details for the selected targets/load balancers/buckets. Before and after detail collection, STS verifies the catalog account still matches. Closing the dialog or changing context invalidates pending responses. The rendered graph retains edges only when both endpoints are selected or required ancestor groups; unrelated referenced endpoints are excluded.

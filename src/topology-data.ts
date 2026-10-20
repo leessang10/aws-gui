@@ -46,6 +46,7 @@ export async function collectTopology(
   context: Pick<Inventory, "account" | "profile" | "region">,
   active: () => boolean,
   progress: (value: string) => void,
+  includeRelationships = true,
 ): Promise<Inventory> {
   const result: Inventory = {
     ...context,
@@ -90,6 +91,26 @@ export async function collectTopology(
       result.warnings.push(`${kind}: ${String(error)}`);
     }
   }
+  result.collectedAt = new Date().toISOString();
+  return includeRelationships
+    ? hydrateTopology(result, read, active, progress)
+    : result;
+}
+export async function hydrateTopology(
+  inventory: Inventory,
+  read: Read,
+  active: () => boolean,
+  progress: (value: string) => void,
+): Promise<Inventory> {
+  const result = {
+    ...inventory,
+    details: { ...inventory.details },
+    warnings: [...inventory.warnings],
+  };
+  const context = result;
+  const check = () => {
+    if (!active()) throw new Error("Collection cancelled");
+  };
   const jobs: [string, string][] = [
     ...result.items.targetGroups.map(
       (r) => ["targets", r.TargetGroupArn] as [string, string],
