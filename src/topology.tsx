@@ -463,20 +463,15 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
               ? text("내보내는 중…", "Exporting…")
               : inventory
                 ? `${counts?.map(([k, v]) => `${({ instances: "EC2", databases: "RDS", loadBalancers: "ELB", targetGroups: "Target groups" } as Record<string, string>)[k]} ${v.length}`).join(" · ")} · S3 ${nodes.filter((n) => n.data.resource.kind === "s3").length} · ${new Date(inventory.collectedAt).toLocaleString()}`
-                : text("조회된 구성 없음", "No infrastructure loaded.")}
+                : null}
       </div>
-      {inventory && (
+      {inventory && inventory.warnings.length + graphWarnings.length > 0 && (
         <details className="topology-warnings">
           <summary>
-            {text("수집 범위 및 누락", "Collection coverage")} ·{" "}
+            {text("조회 오류", "Collection issues")} ·{" "}
             {inventory.warnings.length + graphWarnings.length}
           </summary>
-          <p>
-            {text(
-              "선택한 리전의 EC2, RDS, ELBv2와 S3 버킷을 수집합니다. S3 리전을 확인하지 못한 버킷은 별도로 표시합니다. Classic ELB, 보안 그룹 접근 가능성, 애플리케이션 설정은 분석하지 않습니다. RDS는 VPC 안에 배치하며 DB 서브넷 그룹은 실제 인스턴스 위치로 간주하지 않습니다.",
-              "Collects EC2, RDS, ELBv2 and S3 in the selected region. Buckets with unknown regions are marked. Classic ELB, security-group reachability and application configuration are not analyzed. RDS is placed in its VPC; its subnet group is not treated as the instance's actual subnet.",
-            )}
-          </p>
+
           {[...inventory.warnings, ...graphWarnings].map((w, i) => (
             <pre key={i}>{w}</pre>
           ))}
@@ -514,74 +509,83 @@ export default function Topology(ctx: Context & { snapshot?: Inventory }) {
           </ReactFlow>
           {inventory && !busy && !layingOut && !nodes.length && (
             <div className="topology-empty">
-              {text(
-                "조회된 리소스가 없습니다. 수집 범위 및 누락을 확인하세요.",
-                "No resources returned. Check collection coverage.",
-              )}
+              {text("리소스 없음", "No resources")}
             </div>
           )}
         </div>
-        <aside className="topology-inspector">
-          {filter && (
-            <div className="topology-results">
-              {nodes
-                .filter((n) =>
-                  `${n.data.resource.name} ${n.id}`
-                    .toLowerCase()
-                    .includes(filter.toLowerCase()),
-                )
-                .slice(0, 50)
-                .map((n) => (
+        {(selected || filter.trim()) && (
+          <aside className="topology-inspector">
+            {filter && (
+              <div className="topology-results">
+                {nodes
+                  .filter((n) =>
+                    `${n.data.resource.name} ${n.id}`
+                      .toLowerCase()
+                      .includes(filter.toLowerCase()),
+                  )
+                  .slice(0, 50)
+                  .map((n) => (
+                    <Button
+                      variant="outline"
+                      className="quiet"
+                      key={n.id}
+                      onClick={() => {
+                        setSelected(n.data.resource);
+                        flow?.fitView({
+                          nodes: [{ id: n.id }],
+                          padding: 0.6,
+                          maxZoom: 1,
+                        });
+                      }}
+                    >
+                      {n.data.resource.name}
+                    </Button>
+                  ))}
+              </div>
+            )}
+            {selected ? (
+              <>
+                <div className="flex items-start justify-between gap-2">
+                  <h2>{selected.name}</h2>
                   <Button
-                    variant="outline"
-                    className="quiet"
-                    key={n.id}
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
-                      setSelected(n.data.resource);
-                      flow?.fitView({
-                        nodes: [{ id: n.id }],
-                        padding: 0.6,
-                        maxZoom: 1,
-                      });
+                      setSelected(undefined);
+                      setFilter("");
                     }}
                   >
-                    {n.data.resource.name}
+                    {text("닫기", "Close")}
                   </Button>
-                ))}
-            </div>
-          )}
-          {selected ? (
-            <>
-              <h2>{selected.name}</h2>
-              <p>
-                {selected.kind.toUpperCase()} · {selected.subtitle}
-              </p>
-              <code>{selected.id}</code>
-              <h3>{text("연결 관계", "Relationships")}</h3>
-              {edges
-                .filter(
-                  (e) => e.source === selected.id || e.target === selected.id,
-                )
-                .map((e) => (
-                  <p key={e.id}>
-                    {e.source === selected.id ? "→ " : "← "}
-                    {
-                      nodes.find(
-                        (n) =>
-                          n.id ===
-                          (e.source === selected.id ? e.target : e.source),
-                      )?.data.resource.name
-                    }{" "}
-                    · {String(e.data?.relation ?? "")}
-                  </p>
-                ))}
-              <h3>{text("AWS 응답", "AWS response")}</h3>
-              <pre>{JSON.stringify(selected.raw, null, 2)}</pre>
-            </>
-          ) : (
-            <p>{text("선택한 리소스 없음", "No resource selected.")}</p>
-          )}
-        </aside>
+                </div>
+                <p>
+                  {selected.kind.toUpperCase()} · {selected.subtitle}
+                </p>
+                <code>{selected.id}</code>
+                <h3>{text("연결 관계", "Relationships")}</h3>
+                {edges
+                  .filter(
+                    (e) => e.source === selected.id || e.target === selected.id,
+                  )
+                  .map((e) => (
+                    <p key={e.id}>
+                      {e.source === selected.id ? "→ " : "← "}
+                      {
+                        nodes.find(
+                          (n) =>
+                            n.id ===
+                            (e.source === selected.id ? e.target : e.source),
+                        )?.data.resource.name
+                      }{" "}
+                      · {String(e.data?.relation ?? "")}
+                    </p>
+                  ))}
+                <h3>{text("AWS 응답", "AWS response")}</h3>
+                <pre>{JSON.stringify(selected.raw, null, 2)}</pre>
+              </>
+            ) : null}
+          </aside>
+        )}
       </div>
     </div>
   );
