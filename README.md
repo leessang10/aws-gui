@@ -110,3 +110,15 @@ formatting and Clippy before packaging an artifact.
 
 See [release readiness](docs/release-readiness.md) for enforced runtime limits,
 validation commands and the remaining requirements for public distribution.
+
+## Context menus
+
+Right-click resource rows, sidebar services, catalog cards, resource detail fields,
+S3 objects/prefixes, log events and API operations/results for actions specific to
+that item. Copy actions copy the clicked item's ID, URI, metadata or text. Editing
+still enters the existing review flow; context menus do not execute cloud mutations.
+
+Keyboard: use the Menu key or Shift+F10, arrows/Home/End to move, Enter/Space to
+activate and Escape to close. Input fields and selected text retain their native
+context menu. Menus close on outside click, scroll, resize or removal of the target.
+Clipboard failures are reported instead of showing a false success message.

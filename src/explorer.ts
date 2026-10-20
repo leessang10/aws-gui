@@ -1,8 +1,10 @@
+import { bindContextMenu, copyAction } from "./context-menu";
 import { invoke } from "@tauri-apps/api/core";
 import "./explorer.css";
 import { mergeRows } from "./pagination";
-import { t, locale, type Message } from "./i18n";
+import { t, locale, language, type Message } from "./i18n";
 
+const text = (ko: string, en: string) => (language === "ko" ? ko : en);
 type Row = Record<string, any>;
 type Page = { rows: Row[]; nextToken: string | null };
 type Context = {
@@ -160,15 +162,15 @@ export function mountExplorer(root: HTMLElement, ctx: Context) {
           : `<form id="log-form"><label>${t("range")}<select id="hours" aria-label="${t("range")}">${ranges.map(([h, key]) => `<option value="${h}" ${hours === h ? "selected" : ""}>${t(key)}</option>`).join("")}</select></label><label class="grow">${t("pattern")}<input id="pattern" aria-label="${t("pattern")}" value="${escape(pattern)}" placeholder="${escape(t("patternHint"))}"></label><button class="quiet" ${busy ? "disabled" : ""}>${t("apply")}</button></form>
         <p class="explorer-context">${t("chronological")} · ${new Date(start).toLocaleString(locale())} ~ ${new Date(end).toLocaleString(locale())}</p>`
       }
-      ${error ? `<div class="error" role="alert"><strong>${t("error")}</strong><pre>${escape(error)}</pre><button id="explorer-retry" class="quiet">${t("retry")}</button></div>` : ""}
+      ${error ? `<div class="error" role="alert"><strong>${t("error")}</strong><pre tabindex="0">${escape(error)}</pre><button id="explorer-retry" class="quiet">${t("retry")}</button></div>` : ""}
       ${
         isS3
           ? `<div class="object-list">${rows.map((row, i) => `<button class="object-row" data-object="${i}"><span class="object-icon">${row.kind === "folder" ? "▱" : "▤"}</span><span class="grow"><strong>${escape((row.Prefix ?? row.Key).slice(prefix.length) || row.Key)}</strong><small>${row.kind === "folder" ? t("folder") : `${size(row.Size || 0)} · ${escape(row.StorageClass || "STANDARD")}`}</small></span><span>${row.kind === "folder" ? "›" : escape(new Date(row.LastModified).toLocaleDateString(locale()))}</span></button>`).join("")}</div>`
-          : `<div class="log-events">${rows.map((row) => `<article class="log-event"><header><time>${escape(new Date(row.timestamp).toLocaleString(locale()))}</time><span>${escape(row.logStreamName)}</span></header><pre>${escape(row.message)}</pre></article>`).join("")}</div>`
+          : `<div class="log-events">${rows.map((row, i) => `<article class="log-event" data-event="${i}" tabindex="0"><header><time>${escape(new Date(row.timestamp).toLocaleString(locale()))}</time><span>${escape(row.logStreamName)}</span></header><pre tabindex="0">${escape(row.message)}</pre></article>`).join("")}</div>`
       }
       ${busy ? `<p role="status">${t(isS3 ? "objectsLoading" : "logsLoading")}</p>` : shown && !rows.length ? `<div class="explorer-empty">${t(isS3 ? "noObjects" : "noEvents")}</div>` : ""}
       <div class="explorer-toolbar"><span>${rows.length} ${t("loaded")}</span>${next ? `<button id="explorer-more" class="quiet" ${busy ? "disabled" : ""}>${t("next")}</button>` : ""}<button id="explorer-refresh" class="quiet" ${busy ? "disabled" : ""}>${t("refresh")}</button></div>
-      ${detail ? `<section class="object-detail"><h3>${t("fileInfo")}</h3><p>S3 URI</p><pre>${escape(`s3://${ctx.resource}/${detail.Key}`)}</pre><pre>${escape(JSON.stringify(detail, null, 2))}</pre></section>` : ""}`;
+      ${detail ? `<section class="object-detail"><h3>${t("fileInfo")}</h3><p>S3 URI</p><pre tabindex="0">${escape(`s3://${ctx.resource}/${detail.Key}`)}</pre><pre tabindex="0">${escape(JSON.stringify(detail, null, 2))}</pre></section>` : ""}`;
     root
       .querySelectorAll<HTMLButtonElement>("[data-prefix]")
       .forEach((b) => (b.onclick = () => navigate(b.dataset.prefix!)));
@@ -186,6 +188,62 @@ export function mountExplorer(root: HTMLElement, ctx: Context) {
           }
         }),
     );
+    root.querySelectorAll<HTMLButtonElement>("[data-object]").forEach((b) =>
+      bindContextMenu(b, () => {
+        const row = rows[Number(b.dataset.object)];
+        const key = row.Prefix ?? row.Key;
+        return [
+          {
+            label:
+              row.kind === "folder"
+                ? text("폴더 열기", "Open folder")
+                : text("파일 정보", "File details"),
+            run: () => b.click(),
+          },
+          copyAction(
+            text("S3 URI 복사", "Copy S3 URI"),
+            "s3://" + ctx.resource + "/" + key,
+          ),
+          copyAction(text("키 / 경로 복사", "Copy key / prefix"), key),
+          copyAction(
+            text("메타데이터 JSON 복사", "Copy metadata JSON"),
+            JSON.stringify(row, null, 2),
+          ),
+          {
+            label: text("새로고침", "Refresh"),
+            disabled: busy,
+            run: () => load(),
+          },
+        ];
+      }),
+    );
+    root.querySelectorAll<HTMLElement>("[data-event]").forEach((el) => {
+      const row = rows[Number(el.dataset.event)];
+      const actions = () => [
+        copyAction(text("로그 본문 복사", "Copy log message"), row.message),
+        copyAction(
+          text("로그 스트림 이름 복사", "Copy log stream name"),
+          row.logStreamName,
+        ),
+        copyAction(
+          text("로그 이벤트 JSON 복사", "Copy log event JSON"),
+          JSON.stringify(row, null, 2),
+        ),
+      ];
+      bindContextMenu(el, actions);
+      bindContextMenu(el.querySelector("pre"), actions);
+    });
+    root
+      .querySelectorAll<HTMLButtonElement>("[data-prefix]")
+      .forEach((b) =>
+        bindContextMenu(b, () => [
+          { label: text("폴더 열기", "Open folder"), run: () => b.click() },
+          copyAction(
+            text("S3 URI 복사", "Copy S3 URI"),
+            "s3://" + ctx.resource + "/" + b.dataset.prefix,
+          ),
+        ]),
+      );
     const prefixForm = root.querySelector<HTMLFormElement>("#prefix-form");
     if (prefixForm)
       prefixForm.onsubmit = (e) => {

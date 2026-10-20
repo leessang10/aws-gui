@@ -59,7 +59,7 @@ Packaging reference: https://v2.tauri.app/distribute/windows-installer/
 
 ## Service workbench validation
 
-- 12 frontend regression tests and 10 ordinary Rust tests pass.
+- 18 frontend regression tests and 10 ordinary Rust tests pass.
 - Local integration reads 437 installed service models and verifies EC2 operation
   schema and CLI-generated input skeleton without a network request.
 - Opt-in STS integration exercises the same review/execute implementation as IPC,

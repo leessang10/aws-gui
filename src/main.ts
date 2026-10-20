@@ -12,7 +12,12 @@ import {
 import { mergeRows } from "./pagination";
 import { icon } from "./icons";
 import { mountWorkspace, text, type WorkspaceRoute } from "./workspace";
-import { readPreferences, rememberService } from "./workspace-state";
+import { bindContextMenu, closeContextMenu, copyAction } from "./context-menu";
+import {
+  savePreferences,
+  readPreferences,
+  rememberService,
+} from "./workspace-state";
 
 type Service = "ec2" | "rds" | "s3" | "logs";
 type Resource = Record<string, any>;
@@ -252,6 +257,7 @@ async function init() {
   else void loadIdentity();
 }
 function render() {
+  closeContextMenu();
   const columnKeys: Record<Service, Message[]> = {
     ec2: ["instance", "state", "type", "zone", "ip"],
     rds: ["database", "state", "engine", "dbClass", "zone"],
@@ -296,14 +302,14 @@ function render() {
       <section class="content">
         ${demoMode ? `<div class="demo-banner">${t("preview")}</div>` : ""}
         <div class="page-heading"><div><h1>${t(service)}</h1><p>${t(descriptions[service])}</p></div><button id="open-service-api" class="quiet">${text("API 작업대", "API workbench")}</button><button id="refresh" class="primary" ${busy || booting || !profile ? "disabled" : ""}>${icon("refresh")} ${t(busy ? "loading" : "refresh")}</button></div>
-        ${error ? `<div class="error" role="alert"><strong>${t("error")}</strong><pre>${esc(error)}</pre><p>${t("ssoHint")}</p><button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
+        ${error ? `<div class="error" role="alert"><strong>${t("error")}</strong><pre tabindex="0">${esc(error)}</pre><p>${t("ssoHint")}</p><button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
         ${!profile && !booting && !error ? `<div class="error">${t("profileHelp")}<button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
         <section class="resource-panel">
           <div class="panel-header"><div class="search">${icon("search")}<input id="search" aria-label="${t("search")}" placeholder="${t("search")}" value="${esc(search)}"><kbd>/</kbd></div><select id="status" aria-label="${t("state")}"><option value="all">${t("allStates")}</option>${states.map((s) => `<option value="${esc(s)}" ${statusFilter === s ? "selected" : ""}>${esc(s)}</option>`).join("")}</select><span class="resource-count">${updated ? rows.length : "—"} ${t("resources")}</span></div>
           <div class="table-scroll"><table><thead><tr>${columnKeys[service].map((c) => `<th scope="col">${t(c)}</th>`).join("")}<th scope="col"><span class="sr-only">${t("detail")}</span></th></tr></thead><tbody>${visible
             .map(
               ({ index, cols }) =>
-                `<tr><td><button class="resource-link" data-row="${index}"><span>${esc(cols[0])}${service === "ec2" ? `<small>${esc(rows[index].InstanceId)}</small>` : ""}</span></button></td><td><span class="badge ${["running", "available"].includes(cols[1]) ? "healthy" : ""}">${esc(cols[1])}</span></td>${cols
+                `<tr data-context-row="${index}"><td><button class="resource-link" data-row="${index}"><span>${esc(cols[0])}${service === "ec2" ? `<small>${esc(rows[index].InstanceId)}</small>` : ""}</span></button></td><td><span class="badge ${["running", "available"].includes(cols[1]) ? "healthy" : ""}">${esc(cols[1])}</span></td>${cols
                   .slice(2)
                   .map((c) => `<td class="mono">${esc(c)}</td>`)
                   .join(
@@ -318,7 +324,7 @@ function render() {
       </section>
       <footer class="statusbar"><span title="${esc(cliVersion)}">${esc(cliVersion ? (demoMode ? t("demoData") : cliVersion.split(" ")[0]) : t("cliConnecting"))}</span>${isTauri() ? `<button id="demo" class="text-button">${t(demoMode ? "live" : "demo")}</button>` : ""}</footer>
     </main>
-    ${selected ? `<div class="drawer-backdrop"><aside class="drawer ${service === "s3" || service === "logs" ? "explorer-drawer" : ""}" role="dialog" aria-modal="true" aria-label="${t("detail")}"><div class="drawer-heading"><span>${t(service === "s3" ? "s3Files" : service === "logs" ? "logEvents" : "detail")}</span><button id="close" class="icon-button" aria-label="${t("close")}">${icon("close")}</button></div><h2>${esc(cells(selected)[0])}</h2><button id="full-detail" class="quiet">${text("상세 페이지 · 수정", "Detail page · Edit")}</button>${service === "s3" || service === "logs" ? '<div id="detail-content"></div>' : `<p>${t("raw")}</p><pre>${esc(JSON.stringify(selected, null, 2))}</pre>`}</aside></div>` : ""}`;
+    ${selected ? `<div class="drawer-backdrop"><aside class="drawer ${service === "s3" || service === "logs" ? "explorer-drawer" : ""}" role="dialog" aria-modal="true" aria-label="${t("detail")}"><div class="drawer-heading"><span>${t(service === "s3" ? "s3Files" : service === "logs" ? "logEvents" : "detail")}</span><button id="close" class="icon-button" aria-label="${t("close")}">${icon("close")}</button></div><h2>${esc(cells(selected)[0])}</h2><button id="full-detail" class="quiet">${text("상세 페이지 · 수정", "Detail page · Edit")}</button>${service === "s3" || service === "logs" ? '<div id="detail-content"></div>' : `<p>${t("raw")}</p><pre tabindex="0">${esc(JSON.stringify(selected, null, 2))}</pre>`}</aside></div>` : ""}`;
   if (selected && (service === "s3" || service === "logs")) {
     mountExplorer(document.querySelector<HTMLElement>("#detail-content")!, {
       profile,
@@ -343,6 +349,70 @@ function render() {
         document.querySelector<HTMLButtonElement>("#close")?.focus();
       }),
   );
+  document.querySelectorAll<HTMLElement>("[data-context-row]").forEach((el) => {
+    const row = rows[Number(el.dataset.contextRow)];
+    const id =
+      row.InstanceId ??
+      row.DBInstanceIdentifier ??
+      row.Name ??
+      row.logGroupName;
+    bindContextMenu(el, () => [
+      {
+        label: text("미리보기 열기", "Open preview"),
+        run: () => {
+          selected = row;
+          render();
+          document.querySelector<HTMLButtonElement>("#close")?.focus();
+        },
+      },
+      {
+        label: text("상세 페이지 · 수정", "Detail page · Edit"),
+        run: () =>
+          navigate({
+            kind: "detail",
+            service: service === "s3" ? "s3api" : service,
+            resource: row,
+          }),
+      },
+      copyAction(text("리소스 ID / 이름 복사", "Copy resource ID / name"), id),
+      copyAction(text("JSON 복사", "Copy JSON"), JSON.stringify(row, null, 2)),
+      {
+        label: text("목록 새로고침", "Refresh resources"),
+        disabled: busy,
+        run: () => refresh(),
+      },
+    ]);
+  });
+  bindContextMenu(
+    document.querySelector<HTMLElement>(".drawer"),
+    () => [
+      copyAction(
+        text("리소스 JSON 복사", "Copy resource JSON"),
+        JSON.stringify(selected, null, 2),
+      ),
+      {
+        label: text("상세 페이지 · 수정", "Detail page · Edit"),
+        run: () => document.getElementById("full-detail")?.click(),
+      },
+    ],
+  );
+  bindContextMenu(app, () => [
+    {
+      label: text("전체 서비스", "All services"),
+      run: () => navigate({ kind: "catalog" }),
+    },
+    {
+      label: text("설정", "Settings"),
+      run: () => navigate({ kind: "settings" }),
+    },
+    {
+      label: text(
+        collapsed ? "사이드바 펼치기" : "사이드바 접기",
+        collapsed ? "Expand sidebar" : "Collapse sidebar",
+      ),
+      run: toggleSidebar,
+    },
+  ]);
   bind("full-detail", () =>
     navigate({
       kind: "detail",
@@ -516,6 +586,36 @@ function updateNavigation() {
           service: b.dataset.navService,
         })),
   );
+  nav.querySelectorAll<HTMLButtonElement>("[data-nav-service]").forEach((b) =>
+    bindContextMenu(b, () => {
+      const id = b.dataset.navService!;
+      const prefs = readPreferences();
+      const pinned = prefs.favorites.includes(id);
+      return [
+        { label: text("서비스 열기", "Open service"), run: () => b.click() },
+        {
+          label: text("API 작업대", "API workbench"),
+          run: () => navigate({ kind: "api", service: id }),
+        },
+        {
+          label: text(
+            pinned ? "즐겨찾기에서 제거" : "즐겨찾기에 추가",
+            pinned ? "Remove favorite" : "Add favorite",
+          ),
+          disabled: !pinned && prefs.favorites.length >= 8,
+          run: () => {
+            const p = readPreferences();
+            p.favorites = pinned
+              ? p.favorites.filter((s) => s !== id)
+              : [...p.favorites, id].slice(0, 8);
+            savePreferences(p);
+            updateNavigation();
+          },
+        },
+        copyAction(text("서비스 ID 복사", "Copy service ID"), id),
+      ];
+    }),
+  );
   bind("nav-catalog", () => navigate({ kind: "catalog" }));
   bind("nav-settings", () => navigate({ kind: "settings" }));
 }
@@ -569,7 +669,7 @@ document.addEventListener("keydown", (e) => {
   if (e.key === "Tab" && selected) {
     const focusable = [
       ...document.querySelectorAll<HTMLElement>(
-        ".drawer button:not(:disabled), .drawer input, .drawer select",
+        '.drawer button:not(:disabled), .drawer input, .drawer select, .drawer [tabindex="0"]',
       ),
     ];
     const first = focusable[0],
