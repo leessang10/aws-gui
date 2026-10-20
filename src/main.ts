@@ -11,6 +11,8 @@ import {
 } from "./i18n";
 import { mergeRows } from "./pagination";
 import { icon } from "./icons";
+import { mountWorkspace, text, type WorkspaceRoute } from "./workspace";
+import { readPreferences, rememberService } from "./workspace-state";
 
 type Service = "ec2" | "rds" | "s3" | "logs";
 type Resource = Record<string, any>;
@@ -76,6 +78,7 @@ const demo: Record<Service, Resource[]> = {
 const app = document.querySelector<HTMLDivElement>("#app")!;
 const cache = new Map<string, Cached>();
 let service: Service = "ec2";
+let route: WorkspaceRoute = { kind: "resources" };
 let profile = "";
 let profiles: string[] = [];
 let region = localStorage.getItem("orbit.region") || "ap-northeast-2";
@@ -142,6 +145,7 @@ function cells(row: Resource): string[] {
   ];
 }
 function resetView() {
+  if (route.kind === "detail") route = { kind: "resources" };
   requestId++;
   busy = false;
   selected = null;
@@ -153,7 +157,12 @@ function resetView() {
   nextToken = saved?.nextToken || null;
   updated = saved?.updated || 0;
   render();
-  if (profile && (!saved || Date.now() - saved.updated > 30000)) void refresh();
+  if (
+    route.kind === "resources" &&
+    profile &&
+    (!saved || Date.now() - saved.updated > 30000)
+  )
+    void refresh();
 }
 async function refresh(more = false) {
   if (!profile || busy || booting) return;
@@ -267,6 +276,10 @@ function render() {
     );
   const states = [...new Set(rows.map((row) => cells(row)[1]))];
   app.classList.toggle("collapsed", collapsed);
+  document.body.classList.toggle(
+    "compact",
+    readPreferences().density === "compact",
+  );
   app.innerHTML = `
     <aside class="sidebar" ${selected ? "inert" : ""}>
       <div class="brand-row"><span class="brand">Orbit<span>AWS</span></span><button id="collapse" class="icon-button" aria-label="${t(collapsed ? "expand" : "collapse")}" title="${t(collapsed ? "expand" : "collapse")} (Ctrl+B)" aria-expanded="${!collapsed}">${icon("panel")}</button></div>
@@ -282,7 +295,7 @@ function render() {
       </header>
       <section class="content">
         ${demoMode ? `<div class="demo-banner">${t("preview")}</div>` : ""}
-        <div class="page-heading"><div><h1>${t(service)}</h1><p>${t(descriptions[service])}</p></div><button id="refresh" class="primary" ${busy || booting || !profile ? "disabled" : ""}>${icon("refresh")} ${t(busy ? "loading" : "refresh")}</button></div>
+        <div class="page-heading"><div><h1>${t(service)}</h1><p>${t(descriptions[service])}</p></div><button id="open-service-api" class="quiet">${text("API 작업대", "API workbench")}</button><button id="refresh" class="primary" ${busy || booting || !profile ? "disabled" : ""}>${icon("refresh")} ${t(busy ? "loading" : "refresh")}</button></div>
         ${error ? `<div class="error" role="alert"><strong>${t("error")}</strong><pre>${esc(error)}</pre><p>${t("ssoHint")}</p><button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
         ${!profile && !booting && !error ? `<div class="error">${t("profileHelp")}<button id="retry" class="quiet">${t("reconnect")}</button></div>` : ""}
         <section class="resource-panel">
@@ -305,7 +318,7 @@ function render() {
       </section>
       <footer class="statusbar"><span title="${esc(cliVersion)}">${esc(cliVersion ? (demoMode ? t("demoData") : cliVersion.split(" ")[0]) : t("cliConnecting"))}</span>${isTauri() ? `<button id="demo" class="text-button">${t(demoMode ? "live" : "demo")}</button>` : ""}</footer>
     </main>
-    ${selected ? `<div class="drawer-backdrop"><aside class="drawer ${service === "s3" || service === "logs" ? "explorer-drawer" : ""}" role="dialog" aria-modal="true" aria-label="${t("detail")}"><div class="drawer-heading"><span>${t(service === "s3" ? "s3Files" : service === "logs" ? "logEvents" : "detail")}</span><button id="close" class="icon-button" aria-label="${t("close")}">${icon("close")}</button></div><h2>${esc(cells(selected)[0])}</h2>${service === "s3" || service === "logs" ? '<div id="detail-content"></div>' : `<p>${t("raw")}</p><pre>${esc(JSON.stringify(selected, null, 2))}</pre>`}</aside></div>` : ""}`;
+    ${selected ? `<div class="drawer-backdrop"><aside class="drawer ${service === "s3" || service === "logs" ? "explorer-drawer" : ""}" role="dialog" aria-modal="true" aria-label="${t("detail")}"><div class="drawer-heading"><span>${t(service === "s3" ? "s3Files" : service === "logs" ? "logEvents" : "detail")}</span><button id="close" class="icon-button" aria-label="${t("close")}">${icon("close")}</button></div><h2>${esc(cells(selected)[0])}</h2><button id="full-detail" class="quiet">${text("상세 페이지 · 수정", "Detail page · Edit")}</button>${service === "s3" || service === "logs" ? '<div id="detail-content"></div>' : `<p>${t("raw")}</p><pre>${esc(JSON.stringify(selected, null, 2))}</pre>`}</aside></div>` : ""}`;
   if (selected && (service === "s3" || service === "logs")) {
     mountExplorer(document.querySelector<HTMLElement>("#detail-content")!, {
       profile,
@@ -330,7 +343,17 @@ function render() {
         document.querySelector<HTMLButtonElement>("#close")?.focus();
       }),
   );
+  bind("full-detail", () =>
+    navigate({
+      kind: "detail",
+      service: service === "s3" ? "s3api" : service,
+      resource: selected!,
+    }),
+  );
   bind("collapse", toggleSidebar);
+  bind("open-service-api", () =>
+    navigate({ kind: "api", service: service === "s3" ? "s3api" : service }),
+  );
   bind("refresh", () => void refresh());
   bind("more", () => void refresh(true));
   bind("retry", () => void init());
@@ -348,6 +371,7 @@ function render() {
     selected = null;
     search = "";
     statusFilter = "all";
+    route = { kind: "resources" };
     demoMode = !demoMode;
     void init();
   });
@@ -385,12 +409,126 @@ function render() {
     next.focus();
     next.setSelectionRange(position, position);
   };
+  updateNavigation();
+  if (route.kind !== "resources")
+    mountWorkspace(document.querySelector<HTMLElement>(".content")!, {
+      profile,
+      region,
+      demo: demoMode,
+      route,
+      navigate,
+      settingsChanged: (value) => {
+        if (value) {
+          region = value;
+          localStorage.setItem("orbit.region", region);
+          account = "";
+          identityId++;
+        }
+        cache.clear();
+        rows = [];
+        updated = 0;
+        nextToken = null;
+        render();
+        if (value) void loadIdentity();
+      },
+      clearCache: () => {
+        cache.clear();
+        rows = [];
+        updated = 0;
+        nextToken = null;
+      },
+    });
 }
+function navigate(next: WorkspaceRoute) {
+  window.scrollTo(0, 0);
+  requestId++;
+  busy = false;
+  selected = null;
+  route = next;
+  if (next.service) rememberService(next.service);
+  if (next.kind === "resources") {
+    service = (
+      next.service === "s3api" ? "s3" : next.service || service
+    ) as Service;
+    resetView();
+  } else render();
+}
+function updateNavigation() {
+  const p = readPreferences();
+  const name = (id: string) => (id === "s3api" ? "S3" : id.toUpperCase());
+  const item = (id: string) =>
+    '<button class="nav-item ' +
+    (route.service === id ||
+    (route.kind === "resources" &&
+      (service === "s3" ? "s3api" : service) === id)
+      ? "active"
+      : "") +
+    '" data-nav-service="' +
+    esc(id) +
+    '" title="' +
+    esc(name(id)) +
+    '">' +
+    icon(id === "s3api" ? "s3" : id) +
+    "<span>" +
+    esc(name(id)) +
+    "</span></button>";
+  document.querySelector(".sidebar .nav-label")!.textContent = text(
+    "작업 공간",
+    "Workspace",
+  );
+  const nav = document.querySelector(".sidebar nav")!;
+  nav.innerHTML =
+    '<button id="nav-catalog" class="nav-item ' +
+    (route.kind === "catalog" ? "active" : "") +
+    '" title="' +
+    text("전체 서비스", "All services") +
+    '">' +
+    icon("search") +
+    "<span>" +
+    text("전체 서비스", "All services") +
+    '</span></button><div class="nav-label">' +
+    text("즐겨찾기", "Favorites") +
+    "</div>" +
+    p.favorites.map(item).join("") +
+    '<div class="nav-label">' +
+    text("최근 사용", "Recent") +
+    "</div>" +
+    p.recent
+      .filter((id) => !p.favorites.includes(id))
+      .map(item)
+      .join("") +
+    '<button id="nav-settings" class="nav-item ' +
+    (route.kind === "settings" ? "active" : "") +
+    '" title="' +
+    text("설정", "Settings") +
+    '">' +
+    icon("settings") +
+    "<span>" +
+    text("설정", "Settings") +
+    "</span></button>";
+  nav.querySelectorAll<HTMLButtonElement>("[data-nav-service]").forEach(
+    (b) =>
+      (b.onclick = () =>
+        navigate({
+          kind: ["ec2", "rds", "s3api", "logs"].includes(b.dataset.navService!)
+            ? "resources"
+            : "api",
+          service: b.dataset.navService,
+        })),
+  );
+  bind("nav-catalog", () => navigate({ kind: "catalog" }));
+  bind("nav-settings", () => navigate({ kind: "settings" }));
+}
+window.addEventListener("orbit:navigation", updateNavigation);
 function toggleSidebar() {
   collapsed = !collapsed;
   localStorage.setItem("orbit.sidebarCollapsed", String(collapsed));
-  render();
-  document.querySelector<HTMLButtonElement>("#collapse")?.focus();
+  app.classList.toggle("collapsed", collapsed);
+  const toggle = document.querySelector<HTMLButtonElement>("#collapse");
+  toggle?.setAttribute("aria-expanded", String(!collapsed));
+  toggle?.setAttribute("aria-label", t(collapsed ? "expand" : "collapse"));
+  if (toggle) toggle.title = t(collapsed ? "expand" : "collapse") + " (Ctrl+B)";
+  toggle?.focus();
 }
 async function loadIdentity() {
   const id = ++identityId;
@@ -400,7 +538,7 @@ async function loadIdentity() {
     accountBusy = false;
     return;
   }
-  if (!selected) render();
+  if (!selected && route.kind === "resources") render();
   try {
     const result = await invoke<{ Account: string }>("account_identity", {
       query: { service: "ec2", profile, region, nextToken: null },
@@ -411,7 +549,12 @@ async function loadIdentity() {
   } finally {
     if (id === identityId) {
       accountBusy = false;
-      if (!selected) render();
+      if (!selected && route.kind === "resources") render();
+      else {
+        const label = document.querySelector(".account-id");
+        if (label)
+          label.textContent = `${t("account")}: ${account || t("identityUnavailable")}`;
+      }
     }
   }
 }
@@ -449,7 +592,11 @@ document.addEventListener("keydown", (e) => {
     !["INPUT", "SELECT", "TEXTAREA"].includes((e.target as HTMLElement).tagName)
   ) {
     e.preventDefault();
-    document.querySelector<HTMLInputElement>("#search")?.focus();
+    document
+      .querySelector<HTMLInputElement>(
+        "#search, #catalog-search, #operation-search",
+      )
+      ?.focus();
   }
 });
 void init();

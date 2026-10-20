@@ -15,10 +15,26 @@ Uses your locally installed AWS CLI and existing profiles.
 - Collapsible sidebar (`Ctrl+B`), persisted language and sidebar preferences.
 - In-memory list cache and local search over loaded rows.
 
-All AWS operations are read-only. AWS service/API charges can still apply.
-S3 file download, upload and content previews are not implemented. EC2/RDS
-resource details use the original JSON response. CLI diagnostics and resource
-data preserve their source language.
+The four resource browsers are read-only. The API workbench supports real changes
+only after enabling advanced actions for the current session and reviewing the
+account, region, operation and exact input. Every execution requires a matching
+confirmation phrase. AWS service/API charges can apply. CLI diagnostics and
+resource data preserve their source language.
+
+- Search the installed CLI service catalog (437 services on the development machine).
+- Sidebar favorites (up to eight), recent services (five), and category filters.
+- Settings: language, default region, table density, memory-cache clearing, session actions.
+- Full resource detail pages; EC2 Name tag, RDS backup retention and log retention editors.
+- Generic modeled API operations: input field schema, optional skeleton, JSON input,
+  account-bound review and result viewer. Review expires after five minutes and is single-use.
+
+Binary/streaming APIs and custom CLI commands such as S3 sync require separate
+adapters. File upload/download and object content previews remain unsupported.
+The common workbench is single-page: supply service-native cursor fields in JSON
+for additional pages. Some modeled APIs have CLI customizations that may reject a
+request; not every AWS API has been exercised. Catalog discovery currently targets
+the standard Windows AWS CLI v2 installation. Browser preview uses public catalog
+metadata and sample operations; it cannot access AWS.
 
 ## Run on Windows
 

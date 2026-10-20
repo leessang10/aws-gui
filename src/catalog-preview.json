@@ -1,0 +1,2187 @@
+[
+  {
+    "id": "accessanalyzer",
+    "name": "Access Analyzer",
+    "operations": 39
+  },
+  {
+    "id": "account",
+    "name": "AWS Account",
+    "operations": 18
+  },
+  {
+    "id": "account-access",
+    "name": "Account Access",
+    "operations": 11
+  },
+  {
+    "id": "acm",
+    "name": "AWS Certificate Manager",
+    "operations": 40
+  },
+  {
+    "id": "acm-pca",
+    "name": "AWS Certificate Manager Private Certificate Authority",
+    "operations": 23
+  },
+  {
+    "id": "agent-registry",
+    "name": "Agent Registry",
+    "operations": 3
+  },
+  {
+    "id": "agent-registry-control",
+    "name": "Agent Registry Control",
+    "operations": 15
+  },
+  {
+    "id": "agenttoolkit",
+    "name": "AgentToolkit",
+    "operations": 6
+  },
+  {
+    "id": "aiops",
+    "name": "AWS AI Ops",
+    "operations": 11
+  },
+  {
+    "id": "amp",
+    "name": "Amazon Prometheus Service",
+    "operations": 44
+  },
+  {
+    "id": "amplify",
+    "name": "AWS Amplify",
+    "operations": 37
+  },
+  {
+    "id": "amplifybackend",
+    "name": "AmplifyBackend",
+    "operations": 31
+  },
+  {
+    "id": "amplifyuibuilder",
+    "name": "AWS Amplify UI Builder",
+    "operations": 28
+  },
+  {
+    "id": "apigateway",
+    "name": "Amazon API Gateway",
+    "operations": 124
+  },
+  {
+    "id": "apigatewaymanagementapi",
+    "name": "AmazonApiGatewayManagementApi",
+    "operations": 3
+  },
+  {
+    "id": "apigatewayv2",
+    "name": "AmazonApiGatewayV2",
+    "operations": 103
+  },
+  {
+    "id": "appconfig",
+    "name": "Amazon AppConfig",
+    "operations": 56
+  },
+  {
+    "id": "appconfigdata",
+    "name": "AWS AppConfig Data",
+    "operations": 2
+  },
+  {
+    "id": "appfabric",
+    "name": "AppFabric",
+    "operations": 26
+  },
+  {
+    "id": "appflow",
+    "name": "Amazon Appflow",
+    "operations": 25
+  },
+  {
+    "id": "appintegrations",
+    "name": "Amazon AppIntegrations Service",
+    "operations": 23
+  },
+  {
+    "id": "application-autoscaling",
+    "name": "Application Auto Scaling",
+    "operations": 14
+  },
+  {
+    "id": "application-insights",
+    "name": "Amazon CloudWatch Application Insights",
+    "operations": 33
+  },
+  {
+    "id": "application-signals",
+    "name": "Amazon CloudWatch Application Signals",
+    "operations": 30
+  },
+  {
+    "id": "applicationcostprofiler",
+    "name": "AWS Application Cost Profiler",
+    "operations": 6
+  },
+  {
+    "id": "appmesh",
+    "name": "AWS App Mesh",
+    "operations": 38
+  },
+  {
+    "id": "apprunner",
+    "name": "AWS App Runner",
+    "operations": 37
+  },
+  {
+    "id": "appstream",
+    "name": "Amazon AppStream",
+    "operations": 89
+  },
+  {
+    "id": "appsync",
+    "name": "AWS AppSync",
+    "operations": 74
+  },
+  {
+    "id": "arc-region-switch",
+    "name": "ARC - Region switch",
+    "operations": 22
+  },
+  {
+    "id": "arc-zonal-shift",
+    "name": "AWS ARC - Zonal Shift",
+    "operations": 15
+  },
+  {
+    "id": "artifact",
+    "name": "AWS Artifact",
+    "operations": 17
+  },
+  {
+    "id": "athena",
+    "name": "Amazon Athena",
+    "operations": 70
+  },
+  {
+    "id": "auditmanager",
+    "name": "AWS Audit Manager",
+    "operations": 62
+  },
+  {
+    "id": "autoscaling",
+    "name": "Auto Scaling",
+    "operations": 66
+  },
+  {
+    "id": "autoscaling-plans",
+    "name": "AWS Auto Scaling Plans",
+    "operations": 6
+  },
+  {
+    "id": "b2bi",
+    "name": "AWS B2B Data Interchange",
+    "operations": 30
+  },
+  {
+    "id": "backup",
+    "name": "AWS Backup",
+    "operations": 115
+  },
+  {
+    "id": "backup-gateway",
+    "name": "AWS Backup Gateway",
+    "operations": 25
+  },
+  {
+    "id": "backupsearch",
+    "name": "AWS Backup Search",
+    "operations": 12
+  },
+  {
+    "id": "batch",
+    "name": "AWS Batch",
+    "operations": 48
+  },
+  {
+    "id": "bcm-dashboards",
+    "name": "AWS Billing and Cost Management Dashboards",
+    "operations": 15
+  },
+  {
+    "id": "bcm-data-exports",
+    "name": "AWS Billing and Cost Management Data Exports",
+    "operations": 12
+  },
+  {
+    "id": "bcm-pricing-calculator",
+    "name": "AWS Billing and Cost Management Pricing Calculator",
+    "operations": 36
+  },
+  {
+    "id": "bcm-recommended-actions",
+    "name": "AWS Billing and Cost Management Recommended Actions",
+    "operations": 1
+  },
+  {
+    "id": "bedrock",
+    "name": "Amazon Bedrock",
+    "operations": 108
+  },
+  {
+    "id": "bedrock-agent",
+    "name": "Agents for Amazon Bedrock",
+    "operations": 79
+  },
+  {
+    "id": "bedrock-agent-runtime",
+    "name": "Agents for Amazon Bedrock Runtime",
+    "operations": 35
+  },
+  {
+    "id": "bedrock-agentcore",
+    "name": "Amazon Bedrock AgentCore",
+    "operations": 67
+  },
+  {
+    "id": "bedrock-agentcore-control",
+    "name": "Amazon Bedrock AgentCore Control",
+    "operations": 171
+  },
+  {
+    "id": "bedrock-data-automation",
+    "name": "Data Automation for Amazon Bedrock",
+    "operations": 27
+  },
+  {
+    "id": "bedrock-data-automation-runtime",
+    "name": "Runtime for Amazon Bedrock Data Automation",
+    "operations": 6
+  },
+  {
+    "id": "bedrock-runtime",
+    "name": "Amazon Bedrock Runtime",
+    "operations": 11
+  },
+  {
+    "id": "billing",
+    "name": "AWS Billing",
+    "operations": 23
+  },
+  {
+    "id": "billingconductor",
+    "name": "AWSBillingConductor",
+    "operations": 34
+  },
+  {
+    "id": "braket",
+    "name": "Braket",
+    "operations": 17
+  },
+  {
+    "id": "budgets",
+    "name": "AWS Budgets",
+    "operations": 26
+  },
+  {
+    "id": "ce",
+    "name": "AWS Cost Explorer Service",
+    "operations": 47
+  },
+  {
+    "id": "chatbot",
+    "name": "AWS Chatbot",
+    "operations": 34
+  },
+  {
+    "id": "chime",
+    "name": "Amazon Chime",
+    "operations": 62
+  },
+  {
+    "id": "chime-sdk-identity",
+    "name": "Amazon Chime SDK Identity",
+    "operations": 30
+  },
+  {
+    "id": "chime-sdk-media-pipelines",
+    "name": "Amazon Chime SDK Media Pipelines",
+    "operations": 31
+  },
+  {
+    "id": "chime-sdk-meetings",
+    "name": "Amazon Chime SDK Meetings",
+    "operations": 16
+  },
+  {
+    "id": "chime-sdk-messaging",
+    "name": "Amazon Chime SDK Messaging",
+    "operations": 51
+  },
+  {
+    "id": "chime-sdk-voice",
+    "name": "Amazon Chime SDK Voice",
+    "operations": 96
+  },
+  {
+    "id": "cleanrooms",
+    "name": "AWS Clean Rooms Service",
+    "operations": 103
+  },
+  {
+    "id": "cleanroomsml",
+    "name": "AWS Clean Rooms ML",
+    "operations": 59
+  },
+  {
+    "id": "cloud9",
+    "name": "AWS Cloud9",
+    "operations": 13
+  },
+  {
+    "id": "cloudcontrol",
+    "name": "AWS Cloud Control API",
+    "operations": 8
+  },
+  {
+    "id": "clouddirectory",
+    "name": "Amazon CloudDirectory",
+    "operations": 66
+  },
+  {
+    "id": "cloudformation",
+    "name": "AWS CloudFormation",
+    "operations": 90
+  },
+  {
+    "id": "cloudfront",
+    "name": "Amazon CloudFront",
+    "operations": 167
+  },
+  {
+    "id": "cloudfront-keyvaluestore",
+    "name": "Amazon CloudFront KeyValueStore",
+    "operations": 6
+  },
+  {
+    "id": "cloudhsm",
+    "name": "Amazon CloudHSM",
+    "operations": 20
+  },
+  {
+    "id": "cloudhsmv2",
+    "name": "AWS CloudHSM V2",
+    "operations": 18
+  },
+  {
+    "id": "cloudsearch",
+    "name": "Amazon CloudSearch",
+    "operations": 26
+  },
+  {
+    "id": "cloudsearchdomain",
+    "name": "Amazon CloudSearch Domain",
+    "operations": 3
+  },
+  {
+    "id": "cloudtrail",
+    "name": "AWS CloudTrail",
+    "operations": 60
+  },
+  {
+    "id": "cloudtrail-data",
+    "name": "AWS CloudTrail Data Service",
+    "operations": 1
+  },
+  {
+    "id": "cloudwatch",
+    "name": "Amazon CloudWatch",
+    "operations": 55
+  },
+  {
+    "id": "cloudwatchomni",
+    "name": "CloudWatch Omni",
+    "operations": 61
+  },
+  {
+    "id": "codeartifact",
+    "name": "CodeArtifact",
+    "operations": 48
+  },
+  {
+    "id": "codebuild",
+    "name": "AWS CodeBuild",
+    "operations": 59
+  },
+  {
+    "id": "codecatalyst",
+    "name": "Amazon CodeCatalyst",
+    "operations": 38
+  },
+  {
+    "id": "codecommit",
+    "name": "AWS CodeCommit",
+    "operations": 80
+  },
+  {
+    "id": "codeconnections",
+    "name": "AWS CodeConnections",
+    "operations": 27
+  },
+  {
+    "id": "codedeploy",
+    "name": "AWS CodeDeploy",
+    "operations": 47
+  },
+  {
+    "id": "codeguru-reviewer",
+    "name": "Amazon CodeGuru Reviewer",
+    "operations": 14
+  },
+  {
+    "id": "codeguru-security",
+    "name": "Amazon CodeGuru Security",
+    "operations": 13
+  },
+  {
+    "id": "codeguruprofiler",
+    "name": "Amazon CodeGuru Profiler",
+    "operations": 23
+  },
+  {
+    "id": "codepipeline",
+    "name": "AWS CodePipeline",
+    "operations": 44
+  },
+  {
+    "id": "codestar-connections",
+    "name": "AWS CodeStar connections",
+    "operations": 27
+  },
+  {
+    "id": "codestar-notifications",
+    "name": "AWS CodeStar Notifications",
+    "operations": 13
+  },
+  {
+    "id": "cognito-identity",
+    "name": "Amazon Cognito Identity",
+    "operations": 23
+  },
+  {
+    "id": "cognito-idp",
+    "name": "Amazon Cognito Identity Provider",
+    "operations": 132
+  },
+  {
+    "id": "cognito-sync",
+    "name": "Amazon Cognito Sync",
+    "operations": 17
+  },
+  {
+    "id": "comprehend",
+    "name": "Amazon Comprehend",
+    "operations": 85
+  },
+  {
+    "id": "comprehendmedical",
+    "name": "AWS Comprehend Medical",
+    "operations": 26
+  },
+  {
+    "id": "compute-optimizer",
+    "name": "AWS Compute Optimizer",
+    "operations": 28
+  },
+  {
+    "id": "compute-optimizer-automation",
+    "name": "Compute Optimizer Automation",
+    "operations": 23
+  },
+  {
+    "id": "config",
+    "name": "AWS Config",
+    "operations": 102
+  },
+  {
+    "id": "connect",
+    "name": "Amazon Connect Service",
+    "operations": 397
+  },
+  {
+    "id": "connect-contact-lens",
+    "name": "Amazon Connect Contact Lens",
+    "operations": 1
+  },
+  {
+    "id": "connectcampaigns",
+    "name": "AmazonConnectCampaignService",
+    "operations": 22
+  },
+  {
+    "id": "connectcampaignsv2",
+    "name": "AmazonConnectCampaignServiceV2",
+    "operations": 37
+  },
+  {
+    "id": "connectcases",
+    "name": "Amazon Connect Cases",
+    "operations": 43
+  },
+  {
+    "id": "connecthealth",
+    "name": "Connect Health",
+    "operations": 16
+  },
+  {
+    "id": "connectparticipant",
+    "name": "Amazon Connect Participant Service",
+    "operations": 11
+  },
+  {
+    "id": "controlcatalog",
+    "name": "AWS Control Catalog",
+    "operations": 6
+  },
+  {
+    "id": "controltower",
+    "name": "AWS Control Tower",
+    "operations": 28
+  },
+  {
+    "id": "cost-optimization-hub",
+    "name": "Cost Optimization Hub",
+    "operations": 8
+  },
+  {
+    "id": "cur",
+    "name": "AWS Cost and Usage Report Service",
+    "operations": 7
+  },
+  {
+    "id": "customer-profiles",
+    "name": "Amazon Connect Customer Profiles",
+    "operations": 115
+  },
+  {
+    "id": "databrew",
+    "name": "AWS Glue DataBrew",
+    "operations": 44
+  },
+  {
+    "id": "dataexchange",
+    "name": "AWS Data Exchange",
+    "operations": 37
+  },
+  {
+    "id": "datapipeline",
+    "name": "AWS Data Pipeline",
+    "operations": 19
+  },
+  {
+    "id": "datasync",
+    "name": "AWS DataSync",
+    "operations": 53
+  },
+  {
+    "id": "datazone",
+    "name": "Amazon DataZone",
+    "operations": 190
+  },
+  {
+    "id": "dax",
+    "name": "Amazon DynamoDB Accelerator (DAX)",
+    "operations": 21
+  },
+  {
+    "id": "deadline",
+    "name": "AWSDeadlineCloud",
+    "operations": 127
+  },
+  {
+    "id": "detective",
+    "name": "Amazon Detective",
+    "operations": 29
+  },
+  {
+    "id": "devicefarm",
+    "name": "AWS Device Farm",
+    "operations": 77
+  },
+  {
+    "id": "devops-agent",
+    "name": "AWS DevOps Agent Service",
+    "operations": 63
+  },
+  {
+    "id": "devops-guru",
+    "name": "Amazon DevOps Guru",
+    "operations": 31
+  },
+  {
+    "id": "directconnect",
+    "name": "AWS Direct Connect",
+    "operations": 73
+  },
+  {
+    "id": "discovery",
+    "name": "AWS Application Discovery Service",
+    "operations": 28
+  },
+  {
+    "id": "dlm",
+    "name": "Amazon Data Lifecycle Manager",
+    "operations": 8
+  },
+  {
+    "id": "dms",
+    "name": "AWS Database Migration Service",
+    "operations": 119
+  },
+  {
+    "id": "docdb",
+    "name": "Amazon DocumentDB with MongoDB compatibility",
+    "operations": 55
+  },
+  {
+    "id": "docdb-elastic",
+    "name": "Amazon DocumentDB Elastic Clusters",
+    "operations": 19
+  },
+  {
+    "id": "drs",
+    "name": "Elastic Disaster Recovery Service",
+    "operations": 70
+  },
+  {
+    "id": "ds",
+    "name": "AWS Directory Service",
+    "operations": 80
+  },
+  {
+    "id": "ds-data",
+    "name": "AWS Directory Service Data",
+    "operations": 17
+  },
+  {
+    "id": "dsql",
+    "name": "Amazon Aurora DSQL",
+    "operations": 16
+  },
+  {
+    "id": "dynamodb",
+    "name": "Amazon DynamoDB",
+    "operations": 58
+  },
+  {
+    "id": "dynamodbstreams",
+    "name": "Amazon DynamoDB Streams",
+    "operations": 4
+  },
+  {
+    "id": "ebs",
+    "name": "Amazon Elastic Block Store",
+    "operations": 6
+  },
+  {
+    "id": "ec2",
+    "name": "Amazon Elastic Compute Cloud",
+    "operations": 807
+  },
+  {
+    "id": "ec2-instance-connect",
+    "name": "AWS EC2 Instance Connect",
+    "operations": 2
+  },
+  {
+    "id": "ecr",
+    "name": "Amazon Elastic Container Registry",
+    "operations": 58
+  },
+  {
+    "id": "ecr-public",
+    "name": "Amazon Elastic Container Registry Public",
+    "operations": 23
+  },
+  {
+    "id": "ecs",
+    "name": "Amazon EC2 Container Service",
+    "operations": 77
+  },
+  {
+    "id": "efs",
+    "name": "Amazon Elastic File System",
+    "operations": 31
+  },
+  {
+    "id": "eks",
+    "name": "Amazon Elastic Kubernetes Service",
+    "operations": 70
+  },
+  {
+    "id": "eks-auth",
+    "name": "Amazon EKS Auth",
+    "operations": 1
+  },
+  {
+    "id": "elasticache",
+    "name": "Amazon ElastiCache",
+    "operations": 75
+  },
+  {
+    "id": "elasticbeanstalk",
+    "name": "AWS Elastic Beanstalk",
+    "operations": 47
+  },
+  {
+    "id": "elb",
+    "name": "Elastic Load Balancing",
+    "operations": 29
+  },
+  {
+    "id": "elbv2",
+    "name": "Elastic Load Balancing",
+    "operations": 51
+  },
+  {
+    "id": "elementalinference",
+    "name": "AWS Elemental Inference",
+    "operations": 21
+  },
+  {
+    "id": "emr",
+    "name": "Amazon EMR",
+    "operations": 65
+  },
+  {
+    "id": "emr-containers",
+    "name": "Amazon EMR Containers",
+    "operations": 25
+  },
+  {
+    "id": "emr-serverless",
+    "name": "EMR Serverless",
+    "operations": 22
+  },
+  {
+    "id": "endusermessaging",
+    "name": "AWS End User Messaging",
+    "operations": 27
+  },
+  {
+    "id": "entityresolution",
+    "name": "AWS EntityResolution",
+    "operations": 38
+  },
+  {
+    "id": "es",
+    "name": "Amazon Elasticsearch Service",
+    "operations": 51
+  },
+  {
+    "id": "eventbridgev2",
+    "name": "Amazon EventBridgeV2",
+    "operations": 25
+  },
+  {
+    "id": "events",
+    "name": "Amazon EventBridge",
+    "operations": 57
+  },
+  {
+    "id": "evs",
+    "name": "Amazon Elastic VMware Service",
+    "operations": 24
+  },
+  {
+    "id": "finspace",
+    "name": "FinSpace User Environment Management service",
+    "operations": 50
+  },
+  {
+    "id": "finspace-data",
+    "name": "FinSpace Public API",
+    "operations": 31
+  },
+  {
+    "id": "firehose",
+    "name": "Amazon Kinesis Firehose",
+    "operations": 12
+  },
+  {
+    "id": "fis",
+    "name": "AWS Fault Injection Simulator",
+    "operations": 26
+  },
+  {
+    "id": "fms",
+    "name": "Firewall Management Service",
+    "operations": 42
+  },
+  {
+    "id": "forecast",
+    "name": "Amazon Forecast Service",
+    "operations": 63
+  },
+  {
+    "id": "forecastquery",
+    "name": "Amazon Forecast Query Service",
+    "operations": 2
+  },
+  {
+    "id": "frauddetector",
+    "name": "Amazon Fraud Detector",
+    "operations": 73
+  },
+  {
+    "id": "freetier",
+    "name": "AWS Free Tier",
+    "operations": 5
+  },
+  {
+    "id": "fsx",
+    "name": "Amazon FSx",
+    "operations": 48
+  },
+  {
+    "id": "gamelift",
+    "name": "Amazon GameLift",
+    "operations": 120
+  },
+  {
+    "id": "gameliftstreams",
+    "name": "Amazon GameLift Streams",
+    "operations": 30
+  },
+  {
+    "id": "geo-maps",
+    "name": "Amazon Location Service Maps V2",
+    "operations": 5
+  },
+  {
+    "id": "geo-places",
+    "name": "Amazon Location Service Places V2",
+    "operations": 7
+  },
+  {
+    "id": "geo-routes",
+    "name": "Amazon Location Service Routes V2",
+    "operations": 5
+  },
+  {
+    "id": "glacier",
+    "name": "Amazon Glacier",
+    "operations": 33
+  },
+  {
+    "id": "globalaccelerator",
+    "name": "AWS Global Accelerator",
+    "operations": 56
+  },
+  {
+    "id": "glue",
+    "name": "AWS Glue",
+    "operations": 306
+  },
+  {
+    "id": "grafana",
+    "name": "Amazon Managed Grafana",
+    "operations": 25
+  },
+  {
+    "id": "greengrass",
+    "name": "AWS Greengrass",
+    "operations": 92
+  },
+  {
+    "id": "greengrassv2",
+    "name": "AWS IoT Greengrass V2",
+    "operations": 29
+  },
+  {
+    "id": "groundstation",
+    "name": "AWS Ground Station",
+    "operations": 40
+  },
+  {
+    "id": "guardduty",
+    "name": "Amazon GuardDuty",
+    "operations": 102
+  },
+  {
+    "id": "health",
+    "name": "AWS Health APIs and Notifications",
+    "operations": 15
+  },
+  {
+    "id": "healthlake",
+    "name": "Amazon HealthLake",
+    "operations": 26
+  },
+  {
+    "id": "iam",
+    "name": "AWS Identity and Access Management",
+    "operations": 180
+  },
+  {
+    "id": "iam-toolbox",
+    "name": "IAM Toolbox (Preview)",
+    "operations": 1
+  },
+  {
+    "id": "identitystore",
+    "name": "AWS SSO Identity Store",
+    "operations": 22
+  },
+  {
+    "id": "imagebuilder",
+    "name": "EC2 Image Builder",
+    "operations": 77
+  },
+  {
+    "id": "importexport",
+    "name": "AWS Import/Export",
+    "operations": 6
+  },
+  {
+    "id": "inspector",
+    "name": "Amazon Inspector",
+    "operations": 37
+  },
+  {
+    "id": "inspector-scan",
+    "name": "Inspector Scan",
+    "operations": 1
+  },
+  {
+    "id": "inspector2",
+    "name": "Inspector2",
+    "operations": 81
+  },
+  {
+    "id": "interconnect",
+    "name": "Interconnect",
+    "operations": 13
+  },
+  {
+    "id": "internetmonitor",
+    "name": "Amazon CloudWatch Internet Monitor",
+    "operations": 16
+  },
+  {
+    "id": "invoicing",
+    "name": "AWS Invoicing",
+    "operations": 21
+  },
+  {
+    "id": "iot",
+    "name": "AWS IoT",
+    "operations": 272
+  },
+  {
+    "id": "iot-data",
+    "name": "AWS IoT Data Plane",
+    "operations": 11
+  },
+  {
+    "id": "iot-jobs-data",
+    "name": "AWS IoT Jobs Data Plane",
+    "operations": 5
+  },
+  {
+    "id": "iot-managed-integrations",
+    "name": "Managed integrations for AWS IoT Device Management",
+    "operations": 83
+  },
+  {
+    "id": "iotdeviceadvisor",
+    "name": "AWS IoT Core Device Advisor",
+    "operations": 14
+  },
+  {
+    "id": "iotfleetwise",
+    "name": "AWS IoT FleetWise",
+    "operations": 57
+  },
+  {
+    "id": "iotsecuretunneling",
+    "name": "AWS IoT Secure Tunneling",
+    "operations": 8
+  },
+  {
+    "id": "iotsitewise",
+    "name": "AWS IoT SiteWise",
+    "operations": 149
+  },
+  {
+    "id": "iotthingsgraph",
+    "name": "AWS IoT Things Graph",
+    "operations": 35
+  },
+  {
+    "id": "iottwinmaker",
+    "name": "AWS IoT TwinMaker",
+    "operations": 40
+  },
+  {
+    "id": "iotwireless",
+    "name": "AWS IoT Wireless",
+    "operations": 112
+  },
+  {
+    "id": "ivs",
+    "name": "Amazon Interactive Video Service",
+    "operations": 41
+  },
+  {
+    "id": "ivs-realtime",
+    "name": "Amazon Interactive Video Service RealTime",
+    "operations": 39
+  },
+  {
+    "id": "ivschat",
+    "name": "Amazon Interactive Video Service Chat",
+    "operations": 17
+  },
+  {
+    "id": "kafka",
+    "name": "Managed Streaming for Kafka",
+    "operations": 64
+  },
+  {
+    "id": "kafkaconnect",
+    "name": "Managed Streaming for Kafka Connect",
+    "operations": 19
+  },
+  {
+    "id": "kendra",
+    "name": "AWSKendraFrontendService",
+    "operations": 66
+  },
+  {
+    "id": "kendra-ranking",
+    "name": "Amazon Kendra Intelligent Ranking",
+    "operations": 9
+  },
+  {
+    "id": "keyspaces",
+    "name": "Amazon Keyspaces",
+    "operations": 19
+  },
+  {
+    "id": "keyspacesstreams",
+    "name": "Amazon Keyspaces Streams",
+    "operations": 4
+  },
+  {
+    "id": "kinesis",
+    "name": "Amazon Kinesis",
+    "operations": 45
+  },
+  {
+    "id": "kinesis-video-archived-media",
+    "name": "Amazon Kinesis Video Streams Archived Media",
+    "operations": 6
+  },
+  {
+    "id": "kinesis-video-media",
+    "name": "Amazon Kinesis Video Streams Media",
+    "operations": 1
+  },
+  {
+    "id": "kinesis-video-signaling",
+    "name": "Amazon Kinesis Video Signaling Channels",
+    "operations": 2
+  },
+  {
+    "id": "kinesis-video-webrtc-storage",
+    "name": "Amazon Kinesis Video WebRTC Storage",
+    "operations": 2
+  },
+  {
+    "id": "kinesisanalytics",
+    "name": "Amazon Kinesis Analytics",
+    "operations": 20
+  },
+  {
+    "id": "kinesisanalyticsv2",
+    "name": "Amazon Kinesis Analytics",
+    "operations": 33
+  },
+  {
+    "id": "kinesisvideo",
+    "name": "Amazon Kinesis Video Streams",
+    "operations": 32
+  },
+  {
+    "id": "kms",
+    "name": "AWS Key Management Service",
+    "operations": 54
+  },
+  {
+    "id": "lakeformation",
+    "name": "AWS Lake Formation",
+    "operations": 61
+  },
+  {
+    "id": "lambda",
+    "name": "AWS Lambda",
+    "operations": 88
+  },
+  {
+    "id": "lambda-core",
+    "name": "AWS Lambda Core",
+    "operations": 6
+  },
+  {
+    "id": "lambda-microvms",
+    "name": "Lambda MicroVMs",
+    "operations": 24
+  },
+  {
+    "id": "lambda-web",
+    "name": "Lambda Web",
+    "operations": 20
+  },
+  {
+    "id": "launch-wizard",
+    "name": "AWS Launch Wizard",
+    "operations": 15
+  },
+  {
+    "id": "lex-models",
+    "name": "Amazon Lex Model Building Service",
+    "operations": 42
+  },
+  {
+    "id": "lex-runtime",
+    "name": "Amazon Lex Runtime Service",
+    "operations": 5
+  },
+  {
+    "id": "lexv2-models",
+    "name": "Amazon Lex Model Building V2",
+    "operations": 107
+  },
+  {
+    "id": "lexv2-runtime",
+    "name": "Amazon Lex Runtime V2",
+    "operations": 6
+  },
+  {
+    "id": "license-manager",
+    "name": "AWS License Manager",
+    "operations": 62
+  },
+  {
+    "id": "license-manager-linux-subscriptions",
+    "name": "AWS License Manager Linux Subscriptions",
+    "operations": 11
+  },
+  {
+    "id": "license-manager-user-subscriptions",
+    "name": "AWS License Manager User Subscriptions",
+    "operations": 17
+  },
+  {
+    "id": "lightsail",
+    "name": "Amazon Lightsail",
+    "operations": 162
+  },
+  {
+    "id": "location",
+    "name": "Amazon Location Service",
+    "operations": 64
+  },
+  {
+    "id": "logs",
+    "name": "Amazon CloudWatch Logs",
+    "operations": 118
+  },
+  {
+    "id": "lookoutequipment",
+    "name": "Amazon Lookout for Equipment",
+    "operations": 49
+  },
+  {
+    "id": "m2",
+    "name": "AWSMainframeModernization",
+    "operations": 37
+  },
+  {
+    "id": "machinelearning",
+    "name": "Amazon Machine Learning",
+    "operations": 28
+  },
+  {
+    "id": "macie2",
+    "name": "Amazon Macie 2",
+    "operations": 81
+  },
+  {
+    "id": "mailmanager",
+    "name": "MailManager",
+    "operations": 60
+  },
+  {
+    "id": "managedblockchain",
+    "name": "Amazon Managed Blockchain",
+    "operations": 27
+  },
+  {
+    "id": "managedblockchain-query",
+    "name": "Amazon Managed Blockchain Query",
+    "operations": 9
+  },
+  {
+    "id": "marketplace-agreement",
+    "name": "AWS Marketplace Agreement Service",
+    "operations": 25
+  },
+  {
+    "id": "marketplace-catalog",
+    "name": "AWS Marketplace Catalog Service",
+    "operations": 15
+  },
+  {
+    "id": "marketplace-deployment",
+    "name": "AWS Marketplace Deployment Service",
+    "operations": 4
+  },
+  {
+    "id": "marketplace-discovery",
+    "name": "AWS Marketplace Discovery",
+    "operations": 9
+  },
+  {
+    "id": "marketplace-entitlement",
+    "name": "AWS Marketplace Entitlement Service",
+    "operations": 1
+  },
+  {
+    "id": "marketplace-reporting",
+    "name": "AWS Marketplace Reporting Service",
+    "operations": 1
+  },
+  {
+    "id": "marketplacecommerceanalytics",
+    "name": "AWS Marketplace Commerce Analytics",
+    "operations": 2
+  },
+  {
+    "id": "mediaconnect",
+    "name": "AWS MediaConnect",
+    "operations": 82
+  },
+  {
+    "id": "mediaconvert",
+    "name": "AWS Elemental MediaConvert",
+    "operations": 34
+  },
+  {
+    "id": "medialive",
+    "name": "AWS Elemental MediaLive",
+    "operations": 123
+  },
+  {
+    "id": "mediapackage",
+    "name": "AWS Elemental MediaPackage",
+    "operations": 19
+  },
+  {
+    "id": "mediapackage-vod",
+    "name": "AWS Elemental MediaPackage VOD",
+    "operations": 17
+  },
+  {
+    "id": "mediapackagev2",
+    "name": "AWS Elemental MediaPackage v2",
+    "operations": 30
+  },
+  {
+    "id": "mediastore",
+    "name": "AWS Elemental MediaStore",
+    "operations": 21
+  },
+  {
+    "id": "mediastore-data",
+    "name": "AWS Elemental MediaStore Data Plane",
+    "operations": 5
+  },
+  {
+    "id": "mediatailor",
+    "name": "AWS MediaTailor",
+    "operations": 48
+  },
+  {
+    "id": "medical-imaging",
+    "name": "AWS Health Imaging",
+    "operations": 18
+  },
+  {
+    "id": "memorydb",
+    "name": "Amazon MemoryDB",
+    "operations": 45
+  },
+  {
+    "id": "meteringmarketplace",
+    "name": "AWSMarketplace Metering",
+    "operations": 4
+  },
+  {
+    "id": "mgh",
+    "name": "AWS Migration Hub",
+    "operations": 21
+  },
+  {
+    "id": "mgn",
+    "name": "Application Migration Service",
+    "operations": 95
+  },
+  {
+    "id": "migration-hub-refactor-spaces",
+    "name": "AWS Migration Hub Refactor Spaces",
+    "operations": 24
+  },
+  {
+    "id": "migrationhub-config",
+    "name": "AWS Migration Hub Config",
+    "operations": 4
+  },
+  {
+    "id": "migrationhuborchestrator",
+    "name": "AWS Migration Hub Orchestrator",
+    "operations": 31
+  },
+  {
+    "id": "migrationhubstrategy",
+    "name": "Migration Hub Strategy Recommendations",
+    "operations": 22
+  },
+  {
+    "id": "mpa",
+    "name": "AWS Multi-party Approval",
+    "operations": 22
+  },
+  {
+    "id": "mq",
+    "name": "AmazonMQ",
+    "operations": 25
+  },
+  {
+    "id": "mturk",
+    "name": "Amazon Mechanical Turk",
+    "operations": 39
+  },
+  {
+    "id": "mwaa",
+    "name": "AmazonMWAA",
+    "operations": 12
+  },
+  {
+    "id": "mwaa-serverless",
+    "name": "AmazonMWAAServerless",
+    "operations": 15
+  },
+  {
+    "id": "neptune",
+    "name": "Amazon Neptune",
+    "operations": 70
+  },
+  {
+    "id": "neptune-graph",
+    "name": "Amazon Neptune Graph",
+    "operations": 34
+  },
+  {
+    "id": "neptunedata",
+    "name": "Amazon NeptuneData",
+    "operations": 43
+  },
+  {
+    "id": "network-firewall",
+    "name": "AWS Network Firewall",
+    "operations": 85
+  },
+  {
+    "id": "network-security-manager",
+    "name": "AWS Network Security Manager Customer API",
+    "operations": 46
+  },
+  {
+    "id": "networkflowmonitor",
+    "name": "Network Flow Monitor",
+    "operations": 25
+  },
+  {
+    "id": "networkmanager",
+    "name": "AWS Network Manager",
+    "operations": 95
+  },
+  {
+    "id": "networkmonitor",
+    "name": "Amazon CloudWatch Network Monitor",
+    "operations": 12
+  },
+  {
+    "id": "notifications",
+    "name": "AWS User Notifications",
+    "operations": 40
+  },
+  {
+    "id": "notificationscontacts",
+    "name": "AWS User Notifications Contacts",
+    "operations": 9
+  },
+  {
+    "id": "nova-act",
+    "name": "Nova Act Service",
+    "operations": 16
+  },
+  {
+    "id": "oam",
+    "name": "CloudWatch Observability Access Manager",
+    "operations": 15
+  },
+  {
+    "id": "observabilityadmin",
+    "name": "CloudWatch Observability Admin Service",
+    "operations": 45
+  },
+  {
+    "id": "odb",
+    "name": "odb",
+    "operations": 80
+  },
+  {
+    "id": "omics",
+    "name": "Amazon Omics",
+    "operations": 107
+  },
+  {
+    "id": "opensearch",
+    "name": "Amazon OpenSearch Service",
+    "operations": 96
+  },
+  {
+    "id": "opensearchserverless",
+    "name": "OpenSearch Service Serverless",
+    "operations": 46
+  },
+  {
+    "id": "organizations",
+    "name": "AWS Organizations",
+    "operations": 63
+  },
+  {
+    "id": "osis",
+    "name": "Amazon OpenSearch Ingestion",
+    "operations": 22
+  },
+  {
+    "id": "outposts",
+    "name": "AWS Outposts",
+    "operations": 45
+  },
+  {
+    "id": "partnercentral-account",
+    "name": "Partner Central Account API",
+    "operations": 34
+  },
+  {
+    "id": "partnercentral-benefits",
+    "name": "Partner Central Benefits API",
+    "operations": 17
+  },
+  {
+    "id": "partnercentral-channel",
+    "name": "Partner Central Channel API",
+    "operations": 17
+  },
+  {
+    "id": "partnercentral-revenue-measurement",
+    "name": "Partner Central Revenue Measurement API",
+    "operations": 18
+  },
+  {
+    "id": "partnercentral-selling",
+    "name": "Partner Central Selling API",
+    "operations": 45
+  },
+  {
+    "id": "payment-cryptography",
+    "name": "Payment Cryptography Control Plane",
+    "operations": 32
+  },
+  {
+    "id": "payment-cryptography-data",
+    "name": "Payment Cryptography Data Plane",
+    "operations": 15
+  },
+  {
+    "id": "pca-connector-ad",
+    "name": "PcaConnectorAd",
+    "operations": 25
+  },
+  {
+    "id": "pca-connector-scep",
+    "name": "Private CA Connector for SCEP",
+    "operations": 12
+  },
+  {
+    "id": "pcs",
+    "name": "AWS Parallel Computing Service",
+    "operations": 19
+  },
+  {
+    "id": "personalize",
+    "name": "Amazon Personalize",
+    "operations": 71
+  },
+  {
+    "id": "personalize-events",
+    "name": "Amazon Personalize Events",
+    "operations": 5
+  },
+  {
+    "id": "personalize-runtime",
+    "name": "Amazon Personalize Runtime",
+    "operations": 3
+  },
+  {
+    "id": "pi",
+    "name": "AWS Performance Insights",
+    "operations": 14
+  },
+  {
+    "id": "pinpoint",
+    "name": "Amazon Pinpoint",
+    "operations": 122
+  },
+  {
+    "id": "pinpoint-email",
+    "name": "Amazon Pinpoint Email Service",
+    "operations": 42
+  },
+  {
+    "id": "pinpoint-sms-voice",
+    "name": "Amazon Pinpoint SMS and Voice Service",
+    "operations": 8
+  },
+  {
+    "id": "pinpoint-sms-voice-v2",
+    "name": "Amazon Pinpoint SMS Voice V2",
+    "operations": 110
+  },
+  {
+    "id": "pipes",
+    "name": "Amazon EventBridge Pipes",
+    "operations": 10
+  },
+  {
+    "id": "polly",
+    "name": "Amazon Polly",
+    "operations": 10
+  },
+  {
+    "id": "pricing",
+    "name": "AWS Price List Service",
+    "operations": 5
+  },
+  {
+    "id": "pricing-plan-manager",
+    "name": "PricingPlanManager",
+    "operations": 9
+  },
+  {
+    "id": "proton",
+    "name": "AWS Proton",
+    "operations": 87
+  },
+  {
+    "id": "qapps",
+    "name": "QApps",
+    "operations": 35
+  },
+  {
+    "id": "qbusiness",
+    "name": "QBusiness",
+    "operations": 83
+  },
+  {
+    "id": "qconnect",
+    "name": "Amazon Q Connect",
+    "operations": 94
+  },
+  {
+    "id": "quicksight",
+    "name": "Amazon QuickSight",
+    "operations": 299
+  },
+  {
+    "id": "ram",
+    "name": "AWS Resource Access Manager",
+    "operations": 35
+  },
+  {
+    "id": "rbin",
+    "name": "Amazon Recycle Bin",
+    "operations": 10
+  },
+  {
+    "id": "rds",
+    "name": "Amazon Relational Database Service",
+    "operations": 164
+  },
+  {
+    "id": "rds-data",
+    "name": "AWS RDS DataService",
+    "operations": 6
+  },
+  {
+    "id": "redshift",
+    "name": "Amazon Redshift",
+    "operations": 145
+  },
+  {
+    "id": "redshift-data",
+    "name": "Redshift Data API Service",
+    "operations": 12
+  },
+  {
+    "id": "redshift-serverless",
+    "name": "Redshift Serverless",
+    "operations": 65
+  },
+  {
+    "id": "rekognition",
+    "name": "Amazon Rekognition",
+    "operations": 75
+  },
+  {
+    "id": "repostspace",
+    "name": "AWS re:Post Private",
+    "operations": 19
+  },
+  {
+    "id": "resiliencehub",
+    "name": "AWS Resilience Hub",
+    "operations": 63
+  },
+  {
+    "id": "resiliencehubv2",
+    "name": "AWS Resilience Hub V2",
+    "operations": 73
+  },
+  {
+    "id": "resource-explorer-2",
+    "name": "AWS Resource Explorer",
+    "operations": 32
+  },
+  {
+    "id": "resource-groups",
+    "name": "AWS Resource Groups",
+    "operations": 23
+  },
+  {
+    "id": "resourcegroupstaggingapi",
+    "name": "AWS Resource Groups Tagging API",
+    "operations": 9
+  },
+  {
+    "id": "rolesanywhere",
+    "name": "IAM Roles Anywhere",
+    "operations": 30
+  },
+  {
+    "id": "route53",
+    "name": "Amazon Route 53",
+    "operations": 71
+  },
+  {
+    "id": "route53-recovery-cluster",
+    "name": "Route53 Recovery Cluster",
+    "operations": 4
+  },
+  {
+    "id": "route53-recovery-control-config",
+    "name": "AWS Route53 Recovery Control Config",
+    "operations": 25
+  },
+  {
+    "id": "route53-recovery-readiness",
+    "name": "AWS Route53 Recovery Readiness",
+    "operations": 32
+  },
+  {
+    "id": "route53domains",
+    "name": "Amazon Route 53 Domains",
+    "operations": 34
+  },
+  {
+    "id": "route53globalresolver",
+    "name": "Amazon Route 53 Global Resolver",
+    "operations": 48
+  },
+  {
+    "id": "route53profiles",
+    "name": "Route 53 Profiles",
+    "operations": 16
+  },
+  {
+    "id": "route53resolver",
+    "name": "Amazon Route 53 Resolver",
+    "operations": 72
+  },
+  {
+    "id": "rtbfabric",
+    "name": "RTBFabric",
+    "operations": 36
+  },
+  {
+    "id": "rum",
+    "name": "CloudWatch RUM",
+    "operations": 20
+  },
+  {
+    "id": "s3api",
+    "name": "Amazon Simple Storage Service",
+    "operations": 116
+  },
+  {
+    "id": "s3control",
+    "name": "AWS S3 Control",
+    "operations": 97
+  },
+  {
+    "id": "s3files",
+    "name": "Amazon S3 Files",
+    "operations": 21
+  },
+  {
+    "id": "s3outposts",
+    "name": "Amazon S3 on Outposts",
+    "operations": 5
+  },
+  {
+    "id": "s3tables",
+    "name": "Amazon S3 Tables",
+    "operations": 49
+  },
+  {
+    "id": "s3vectors",
+    "name": "Amazon S3 Vectors",
+    "operations": 21
+  },
+  {
+    "id": "sagemaker",
+    "name": "Amazon SageMaker Service",
+    "operations": 409
+  },
+  {
+    "id": "sagemaker-a2i-runtime",
+    "name": "Amazon Augmented AI Runtime",
+    "operations": 5
+  },
+  {
+    "id": "sagemaker-edge",
+    "name": "Amazon Sagemaker Edge Manager",
+    "operations": 3
+  },
+  {
+    "id": "sagemaker-featurestore-runtime",
+    "name": "Amazon SageMaker Feature Store Runtime",
+    "operations": 7
+  },
+  {
+    "id": "sagemaker-geospatial",
+    "name": "Amazon SageMaker geospatial capabilities",
+    "operations": 19
+  },
+  {
+    "id": "sagemaker-metrics",
+    "name": "Amazon SageMaker Metrics Service",
+    "operations": 2
+  },
+  {
+    "id": "sagemaker-runtime",
+    "name": "Amazon SageMaker Runtime",
+    "operations": 3
+  },
+  {
+    "id": "sagemakerjobruntime",
+    "name": "Sagemaker Job Runtime Service",
+    "operations": 4
+  },
+  {
+    "id": "sagemakertrainingsessionruntime",
+    "name": "SageMaker Training Session Runtime",
+    "operations": 6
+  },
+  {
+    "id": "savingsplans",
+    "name": "AWS Savings Plans",
+    "operations": 10
+  },
+  {
+    "id": "scheduler",
+    "name": "Amazon EventBridge Scheduler",
+    "operations": 12
+  },
+  {
+    "id": "schemas",
+    "name": "Schemas",
+    "operations": 31
+  },
+  {
+    "id": "sdb",
+    "name": "Amazon SimpleDB",
+    "operations": 10
+  },
+  {
+    "id": "secretsmanager",
+    "name": "AWS Secrets Manager",
+    "operations": 23
+  },
+  {
+    "id": "security-ir",
+    "name": "Security Incident Response",
+    "operations": 25
+  },
+  {
+    "id": "securityagent",
+    "name": "AWS Security Agent",
+    "operations": 96
+  },
+  {
+    "id": "securityhub",
+    "name": "AWS SecurityHub",
+    "operations": 123
+  },
+  {
+    "id": "securitylake",
+    "name": "Amazon Security Lake",
+    "operations": 31
+  },
+  {
+    "id": "serverlessrepo",
+    "name": "AWSServerlessApplicationRepository",
+    "operations": 14
+  },
+  {
+    "id": "service-quotas",
+    "name": "Service Quotas",
+    "operations": 26
+  },
+  {
+    "id": "servicecatalog",
+    "name": "AWS Service Catalog",
+    "operations": 90
+  },
+  {
+    "id": "servicecatalog-appregistry",
+    "name": "AWS Service Catalog App Registry",
+    "operations": 24
+  },
+  {
+    "id": "servicediscovery",
+    "name": "AWS Cloud Map",
+    "operations": 30
+  },
+  {
+    "id": "ses",
+    "name": "Amazon Simple Email Service",
+    "operations": 71
+  },
+  {
+    "id": "sesv2",
+    "name": "Amazon Simple Email Service",
+    "operations": 116
+  },
+  {
+    "id": "shield",
+    "name": "AWS Shield",
+    "operations": 36
+  },
+  {
+    "id": "signer",
+    "name": "AWS Signer",
+    "operations": 19
+  },
+  {
+    "id": "signer-data",
+    "name": "AWS Signer Data Plane",
+    "operations": 1
+  },
+  {
+    "id": "signin",
+    "name": "AWS Sign-In Service",
+    "operations": 11
+  },
+  {
+    "id": "simpledbv2",
+    "name": "Amazon SimpleDB v2",
+    "operations": 3
+  },
+  {
+    "id": "snow-device-management",
+    "name": "AWS Snow Device Management",
+    "operations": 13
+  },
+  {
+    "id": "snowball",
+    "name": "Amazon Import/Export Snowball",
+    "operations": 27
+  },
+  {
+    "id": "sns",
+    "name": "Amazon Simple Notification Service",
+    "operations": 42
+  },
+  {
+    "id": "socialmessaging",
+    "name": "AWS End User Messaging Social",
+    "operations": 38
+  },
+  {
+    "id": "sqs",
+    "name": "Amazon Simple Queue Service",
+    "operations": 23
+  },
+  {
+    "id": "ssm",
+    "name": "Amazon Simple Systems Manager (SSM)",
+    "operations": 152
+  },
+  {
+    "id": "ssm-contacts",
+    "name": "AWS Systems Manager Incident Manager Contacts",
+    "operations": 39
+  },
+  {
+    "id": "ssm-guiconnect",
+    "name": "AWS SSM-GUIConnect",
+    "operations": 3
+  },
+  {
+    "id": "ssm-incidents",
+    "name": "AWS Systems Manager Incident Manager",
+    "operations": 31
+  },
+  {
+    "id": "ssm-quicksetup",
+    "name": "AWS Systems Manager QuickSetup",
+    "operations": 14
+  },
+  {
+    "id": "ssm-sap",
+    "name": "AWS Systems Manager for SAP",
+    "operations": 27
+  },
+  {
+    "id": "sso",
+    "name": "AWS Single Sign-On",
+    "operations": 4
+  },
+  {
+    "id": "sso-admin",
+    "name": "AWS Single Sign-On Admin",
+    "operations": 79
+  },
+  {
+    "id": "sso-oidc",
+    "name": "AWS SSO OIDC",
+    "operations": 4
+  },
+  {
+    "id": "stepfunctions",
+    "name": "AWS Step Functions",
+    "operations": 37
+  },
+  {
+    "id": "storagegateway",
+    "name": "AWS Storage Gateway",
+    "operations": 96
+  },
+  {
+    "id": "sts",
+    "name": "AWS Security Token Service",
+    "operations": 11
+  },
+  {
+    "id": "supplychain",
+    "name": "AWS Supply Chain",
+    "operations": 30
+  },
+  {
+    "id": "support",
+    "name": "AWS Support",
+    "operations": 20
+  },
+  {
+    "id": "support-app",
+    "name": "AWS Support App",
+    "operations": 10
+  },
+  {
+    "id": "supportauthz",
+    "name": "SupportAuthZ",
+    "operations": 11
+  },
+  {
+    "id": "sustainability",
+    "name": "AWS Sustainability",
+    "operations": 4
+  },
+  {
+    "id": "swf",
+    "name": "Amazon Simple Workflow Service",
+    "operations": 39
+  },
+  {
+    "id": "synthetics",
+    "name": "Synthetics",
+    "operations": 22
+  },
+  {
+    "id": "taxsettings",
+    "name": "Tax Settings",
+    "operations": 16
+  },
+  {
+    "id": "textract",
+    "name": "Amazon Textract",
+    "operations": 25
+  },
+  {
+    "id": "timestream-influxdb",
+    "name": "Timestream InfluxDB",
+    "operations": 24
+  },
+  {
+    "id": "timestream-query",
+    "name": "Amazon Timestream Query",
+    "operations": 15
+  },
+  {
+    "id": "timestream-write",
+    "name": "Amazon Timestream Write",
+    "operations": 19
+  },
+  {
+    "id": "tnb",
+    "name": "AWS Telco Network Builder",
+    "operations": 33
+  },
+  {
+    "id": "transcribe",
+    "name": "Amazon Transcribe Service",
+    "operations": 44
+  },
+  {
+    "id": "transfer",
+    "name": "AWS Transfer Family",
+    "operations": 71
+  },
+  {
+    "id": "translate",
+    "name": "Amazon Translate",
+    "operations": 19
+  },
+  {
+    "id": "trustedadvisor",
+    "name": "TrustedAdvisor Public API",
+    "operations": 12
+  },
+  {
+    "id": "uxc",
+    "name": "AWS User Experience Customization",
+    "operations": 3
+  },
+  {
+    "id": "verifiedpermissions",
+    "name": "Amazon Verified Permissions",
+    "operations": 34
+  },
+  {
+    "id": "voice-id",
+    "name": "Amazon Voice ID",
+    "operations": 29
+  },
+  {
+    "id": "vpc-lattice",
+    "name": "Amazon VPC Lattice",
+    "operations": 73
+  },
+  {
+    "id": "waf",
+    "name": "AWS WAF",
+    "operations": 77
+  },
+  {
+    "id": "waf-regional",
+    "name": "AWS WAF Regional",
+    "operations": 81
+  },
+  {
+    "id": "wafv2",
+    "name": "AWS WAFV2",
+    "operations": 59
+  },
+  {
+    "id": "wellarchitected",
+    "name": "AWS Well-Architected Tool",
+    "operations": 95
+  },
+  {
+    "id": "wickr",
+    "name": "AWS Wickr Admin API",
+    "operations": 44
+  },
+  {
+    "id": "wisdom",
+    "name": "Amazon Connect Wisdom Service",
+    "operations": 41
+  },
+  {
+    "id": "workdocs",
+    "name": "Amazon WorkDocs",
+    "operations": 44
+  },
+  {
+    "id": "workmail",
+    "name": "Amazon WorkMail",
+    "operations": 92
+  },
+  {
+    "id": "workmailmessageflow",
+    "name": "Amazon WorkMail Message Flow",
+    "operations": 2
+  },
+  {
+    "id": "workspaces",
+    "name": "Amazon WorkSpaces",
+    "operations": 91
+  },
+  {
+    "id": "workspaces-instances",
+    "name": "Amazon Workspaces Instances",
+    "operations": 13
+  },
+  {
+    "id": "workspaces-thin-client",
+    "name": "Amazon WorkSpaces Thin Client",
+    "operations": 16
+  },
+  {
+    "id": "workspaces-web",
+    "name": "Amazon WorkSpaces Web",
+    "operations": 75
+  },
+  {
+    "id": "xray",
+    "name": "AWS X-Ray",
+    "operations": 38
+  }
+]

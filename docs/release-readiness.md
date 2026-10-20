@@ -21,7 +21,9 @@ AWS credentials or invokes the opt-in live integration test.
 
 ## Runtime protections
 
-- Only allowlisted read operations are exposed through IPC; no shell commands.
+- Resource browsers expose allowlisted reads. The API workbench validates operations
+  against installed CLI models, uses JSON input without a shell, and requires
+  one-use account-bound review before execution. Advanced actions default off.
 - On Windows, prefer the standard AWS CLI v2 installation. Otherwise resolve an
   absolute executable through absolute PATH entries; never search the working directory.
 - At most three CLI processes, five-second queue admission timeout, 40-second
@@ -54,3 +56,27 @@ until release hosting, signing and rollback are configured. Search filters only
 loaded resource rows. No telemetry or crash-upload service is configured.
 
 Packaging reference: https://v2.tauri.app/distribute/windows-installer/
+
+## Service workbench validation
+
+- 12 frontend regression tests and 10 ordinary Rust tests pass.
+- Local integration reads 437 installed service models and verifies EC2 operation
+  schema and CLI-generated input skeleton without a network request.
+- Opt-in STS integration exercises the same review/execute implementation as IPC,
+  verifies account binding, and rejects reuse of the consumed review.
+- Browser sample UI verified: catalog search/category filter, full resource detail,
+  EC2 edit payload and explicit review. No real mutation was performed.
+
+```powershell
+cargo test --manifest-path src-tauri/Cargo.toml installed_models_and_skeleton -- --ignored --nocapture
+$env:ORBIT_LIVE_PROFILE = 'YOUR_PROFILE'
+$env:ORBIT_LIVE_REGION = 'YOUR_REGION'
+cargo test --manifest-path src-tauri/Cargo.toml live_reviewed_identity -- --ignored
+```
+
+Advanced workbench coverage is model-driven, not equivalent to testing every AWS
+operation. IAM authorization and detailed parameter constraints remain enforced
+by AWS CLI/AWS. Application input validation checks modeled top-level fields and
+required parameters. No automatic retries are performed by the UI; read-only calls allow two CLI attempts and potentially mutating workbench calls
+use one CLI attempt. For an ambiguous write failure, verify
+remote state before manually submitting another request.

@@ -1,5 +1,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+mod workbench;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use std::{sync::Arc, time::Duration};
@@ -202,6 +203,14 @@ fn aws_executable() -> Result<std::path::PathBuf, String> {
 }
 
 async fn execute(args: Vec<String>, runner: &Runner) -> Result<String, String> {
+    execute_with_attempts(args, runner, "2").await
+}
+
+async fn execute_with_attempts(
+    args: Vec<String>,
+    runner: &Runner,
+    attempts: &str,
+) -> Result<String, String> {
     let _permit = timeout(Duration::from_secs(5), runner.0.acquire())
         .await
         .map_err(|_| "Too many pending requests. Try again shortly.")?
@@ -211,7 +220,7 @@ async fn execute(args: Vec<String>, runner: &Runner) -> Result<String, String> {
         .args(args)
         .env("AWS_PAGER", "")
         .env("AWS_CLI_AUTO_PROMPT", "off")
-        .env("AWS_MAX_ATTEMPTS", "2")
+        .env("AWS_MAX_ATTEMPTS", attempts)
         .stdin(std::process::Stdio::null())
         .stdout(std::process::Stdio::piped())
         .stderr(std::process::Stdio::piped())
@@ -307,11 +316,18 @@ async fn account_identity(query: Query, runner: tauri::State<'_, Runner>) -> Res
 fn main() {
     tauri::Builder::default()
         .manage(Runner(Arc::new(Semaphore::new(3))))
+        .manage(workbench::Workbench::default())
         .invoke_handler(tauri::generate_handler![
             bootstrap,
             list_resources,
             browse_resources,
-            account_identity
+            account_identity,
+            workbench::service_catalog,
+            workbench::service_operations,
+            workbench::set_advanced_enabled,
+            workbench::api_skeleton,
+            workbench::prepare_api,
+            workbench::execute_api
         ])
         .run(tauri::generate_context!())
         .expect("Unable to run Orbit");
