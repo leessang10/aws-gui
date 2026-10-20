@@ -1,7 +1,7 @@
 # Release readiness
 
 Orbit currently targets Windows x64 with AWS CLI v2 and WebView2. The current
-installer is an **unsigned internal evaluation build**, not a signed public release.
+v0.1.0 release provides **unsigned public binaries**. Signing and clean-machine qualification remain outstanding.
 
 ## Reproducible checks
 
@@ -36,7 +36,7 @@ AWS credentials or invokes the opt-in live integration test.
 - Resource cache has at most 12 contexts. CloudWatch bodies remain in memory.
 - Cloud content is HTML-escaped before rendering; CSP disallows remote scripts.
 
-## Required before a public release
+## Remaining release hardening
 
 - Configure an owned Windows signing identity and verify signatures on executable
   and installer. No signing key or certificate is included in this repository.
@@ -59,7 +59,7 @@ Packaging reference: https://v2.tauri.app/distribute/windows-installer/
 
 ## Service workbench validation
 
-- 18 frontend regression tests and 10 ordinary Rust tests pass.
+- 61 frontend regression tests and 13 ordinary Rust tests pass.
 - Local integration reads 437 installed service models and verifies EC2 operation
   schema and CLI-generated input skeleton without a network request.
 - Opt-in STS integration exercises the same review/execute implementation as IPC,

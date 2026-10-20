@@ -40,6 +40,17 @@ request; not every AWS API has been exercised. Catalog discovery currently targe
 the standard Windows AWS CLI v2 installation. Browser preview uses public catalog
 metadata and sample operations; it cannot access AWS.
 
+## Download v0.1.0
+
+Download the Windows x64 installer or standalone executable from [GitHub Releases](https://github.com/leessang10/aws-gui/releases/tag/v0.1.0).
+
+- Orbit_0.1.0_x64-setup.exe: per-user installer.
+- Orbit_0.1.0_windows_x64.exe: standalone app; requires WebView2.
+- Source code ZIP/tar.gz: available on the same release page.
+- SHA256SUMS.txt: checksums for the release executables.
+
+AWS CLI v2 and a configured AWS profile are required. These initial binaries are unsigned; Windows may show an unknown-publisher warning. See [release notes](docs/releases/v0.1.0.md) for requirements and limitations.
+
 ## Run on Windows
 
 Install Node.js 22+, Rust with MSVC build tools, WebView2 and AWS CLI v2.
