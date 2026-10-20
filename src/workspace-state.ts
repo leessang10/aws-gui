@@ -39,14 +39,6 @@ export function rememberService(id: string) {
   p.recent = [id, ...p.recent.filter((s) => s !== id)].slice(0, 5);
   savePreferences(p);
 }
-export const escapeHtml = (v: unknown) =>
-  String(v ?? "—").replace(
-    /[&<>"']/g,
-    (c) =>
-      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
-        c
-      ]!,
-  );
 export type CatalogService = { id: string; name: string; operations: number };
 export function category(id: string): string {
   if (

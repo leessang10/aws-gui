@@ -1,9 +1,9 @@
 # Orbit
 
-A desktop AWS resource browser built with **Tauri 2, Rust and TypeScript**.
+A desktop AWS resource browser built with **Tauri 2, Rust, React and TypeScript**.
 Uses your locally installed AWS CLI and existing profiles.
 
-![Sample workspace](docs/preview.png)
+![Orbit workspace](docs/react-workspace.png)
 
 ## Features
 
@@ -50,7 +50,7 @@ The launcher adds the standard Cargo directory to its process PATH and runs
 Configure profiles externally with `aws configure` or `aws configure sso`.
 For SSO, run `aws sso login --profile YOUR_PROFILE`.
 
-Choose a profile and region, then refresh. The account ID is fetched on connection
+Choose a profile and region to load resources; refresh when needed. The account ID is fetched on connection
 and context changes. Two differently named profiles can point to the same account.
 
 `npm run dev` starts a browser-only **sample-data preview**, with no AWS access.
@@ -81,7 +81,7 @@ cargo test --manifest-path src-tauri/Cargo.toml live_readonly -- --ignored --noc
 
 ## Validation
 
-- TypeScript/Vite build and five Rust unit tests.
+- React/TypeScript/Vite build, 32 frontend regression tests and 12 Rust unit tests.
 - Live Rust integration: RDS, S3 and log group lists; S3 root and child folder;
   CloudWatch message bodies and the next page.
 - Desktop UI: real EC2/RDS/S3/log group lists.
@@ -93,6 +93,11 @@ were checked using sample data in the browser. AWS latency, desktop startup and
 memory usage have not been benchmarked.
 
 ## Architecture
+
+The frontend uses a single React root with TypeScript throughout. shadcn/ui (Radix),
+Tailwind CSS 4 and Lucide provide shared tables, sheets, tabs, menus, controls and icons.
+Theme tokens live in `src/styles.css`; generated components live in `src/components/ui`.
+The infrastructure canvas and image/PDF exporters load on demand.
 
 The frontend invokes narrow Tauri commands. Rust builds allowlisted AWS CLI
 argument arrays without a shell, caps concurrent processes at three, bounds
@@ -120,7 +125,7 @@ still enters the existing review flow; context menus do not execute cloud mutati
 
 Keyboard: use the Menu key or Shift+F10, arrows/Home/End to move, Enter/Space to
 activate and Escape to close. Input fields and selected text retain their native
-context menu. Menus close on outside click, scroll, resize or removal of the target.
+context menu. Menus close on outside click or removal of the target.
 Clipboard failures are reported instead of showing a false success message.
 
 ## Infrastructure map

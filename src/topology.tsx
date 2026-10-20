@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
-import { createRoot } from "react-dom/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { NativeSelect } from "@/components/ui/native-select";
+import { ServiceIcon } from "./shared-ui";
 import {
   ReactFlow,
   Background,
@@ -17,7 +20,7 @@ import {
 } from "@xyflow/react";
 import { invoke, isTauri } from "@tauri-apps/api/core";
 import { language } from "./i18n";
-import { icon } from "./icons";
+
 import {
   buildTopology,
   collectTopology,
@@ -38,18 +41,9 @@ function ResourceNode({ data }: NodeProps<Node<Data>>) {
       title={`${r.name}\n${r.subtitle}\n${r.id}`}
     >
       <Handle type="target" position={Position.Left} isConnectable={false} />
-      <span
-        className="infra-icon"
-        dangerouslySetInnerHTML={{
-          __html: icon(
-            r.kind === "target"
-              ? "arrow"
-              : r.kind === "subnet" || r.kind === "vpc"
-                ? "panel"
-                : r.kind,
-          ),
-        }}
-      />
+      <span className="infra-icon">
+        <ServiceIcon service={r.kind} />
+      </span>
       <small>{r.kind.toUpperCase()}</small>
       {data.mode !== "icons" && <strong>{r.name}</strong>}
       {data.mode === "detail" && (
@@ -95,22 +89,7 @@ function FitLayout({ version }: { version: number }) {
   return null;
 }
 type Context = { profile: string; region: string; demo: boolean };
-export function mountTopology(
-  host: HTMLElement,
-  ctx: Context,
-  snapshot?: Inventory,
-) {
-  const root = createRoot(host);
-  root.render(<Topology {...ctx} snapshot={snapshot} />);
-  const observer = new MutationObserver(() => {
-    if (!host.isConnected) {
-      observer.disconnect();
-      root.unmount();
-    }
-  });
-  observer.observe(document.body, { childList: true, subtree: true });
-}
-function Topology(ctx: Context & { snapshot?: Inventory }) {
+export default function Topology(ctx: Context & { snapshot?: Inventory }) {
   const [inventory, setInventory] = useState<Inventory | undefined>(
     ctx.snapshot,
   );
@@ -379,15 +358,17 @@ function Topology(ctx: Context & { snapshot?: Inventory }) {
             {inventory ? ` · ${inventory.account}` : ""}
           </p>
         </div>
-        <button
+        <Button
+          variant="outline"
           className="primary"
           onClick={collect}
           disabled={busy || !ctx.profile}
         >
           {text("구조도 조회", "Collect infrastructure")}
-        </button>
+        </Button>
         {busy && (
-          <button
+          <Button
+            variant="outline"
             className="quiet"
             onClick={() => {
               epoch.current++;
@@ -396,7 +377,7 @@ function Topology(ctx: Context & { snapshot?: Inventory }) {
             }}
           >
             {text("수집 중지", "Stop collection")}
-          </button>
+          </Button>
         )}
       </div>
       <p className="topology-note">
@@ -408,7 +389,8 @@ function Topology(ctx: Context & { snapshot?: Inventory }) {
       <div className="topology-toolbar">
         <label>
           {text("보기", "View")}{" "}
-          <select
+          <NativeSelect
+            aria-label={text("보기", "View")}
             value={mode}
             onChange={(e) => setMode(e.target.value as ViewMode)}
             disabled={exporting}
@@ -416,41 +398,45 @@ function Topology(ctx: Context & { snapshot?: Inventory }) {
             <option value="icons">{text("아이콘만", "Icons")}</option>
             <option value="simple">{text("간단히", "Simple")}</option>
             <option value="detail">{text("상세", "Detailed")}</option>
-          </select>
+          </NativeSelect>
         </label>
-        <button
+        <Button
+          variant="outline"
           className="quiet"
           onClick={() => setRevision((r) => r + 1)}
           disabled={!inventory || layingOut || exporting}
         >
           {text("자동 정렬", "Auto layout")}
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
           className="quiet"
           onClick={() => flow?.fitView({ padding: 0.15 })}
         >
           {text("전체 맞춤", "Fit all")}
-        </button>
-        <input
+        </Button>
+        <Input
           aria-label={text("리소스 찾기", "Find resource")}
           placeholder={text("이름 또는 ID 검색", "Find name or ID")}
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
         />
-        <button
+        <Button
+          variant="outline"
           className="quiet"
           disabled={!nodes.length || busy || layingOut || exporting}
           onClick={() => exportImage("png")}
         >
           PNG
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="outline"
           className="quiet"
           disabled={!nodes.length || busy || layingOut || exporting}
           onClick={() => exportImage("pdf")}
         >
           PDF
-        </button>
+        </Button>
       </div>
       {error && (
         <p role="alert" className="workspace-error">
@@ -540,7 +526,8 @@ function Topology(ctx: Context & { snapshot?: Inventory }) {
                 )
                 .slice(0, 50)
                 .map((n) => (
-                  <button
+                  <Button
+                    variant="outline"
                     className="quiet"
                     key={n.id}
                     onClick={() => {
@@ -553,7 +540,7 @@ function Topology(ctx: Context & { snapshot?: Inventory }) {
                     }}
                   >
                     {n.data.resource.name}
-                  </button>
+                  </Button>
                 ))}
             </div>
           )}

@@ -1,7 +1,12 @@
 // Isolated browser fixture. This file is not imported by the production app.
-import "../src/style.css";
-import "../src/workspace.css";
-import { mountTopology } from "../src/topology";
+import "../src/styles.css";
+
+import Topology from "../src/topology";
+import { createRoot } from "react-dom/client";
+import { createElement } from "react";
+function mountTopology(host: Element, ctx: any, snapshot: any) {
+  createRoot(host).render(createElement(Topology, { ...ctx, snapshot }));
+}
 mountTopology(
   document.querySelector("#diagram")!,
   {

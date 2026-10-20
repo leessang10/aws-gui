@@ -3,7 +3,7 @@
 }
 .topology-note,
 .topology-status {
-  color: var(--muted);
+  color: var(--muted-foreground);
   font-size: 12px;
   line-height: 1.6;
 }
@@ -23,7 +23,7 @@
 }
 .topology-body {
   display: flex;
-  border: 1px solid var(--line);
+  border: 1px solid var(--border);
   height: max(560px, 65vh);
   margin: 12px 0;
 }
@@ -37,7 +37,7 @@
   width: 260px;
   flex-shrink: 0;
   overflow: auto;
-  border-left: 1px solid var(--line);
+  border-left: 1px solid var(--border);
   padding: 16px;
   font-size: 12px;
   overflow-wrap: anywhere;

@@ -1,5 +1,4 @@
 import { language } from "./i18n";
-import { escapeHtml as esc } from "./workspace-state";
 
 const text = (ko: string, en: string) => (language === "ko" ? ko : en);
 type Row = Record<string, any>;
@@ -166,51 +165,4 @@ export function resourceActions(service: string, row: Row): Action[] {
       },
     ];
   return [];
-}
-
-export function mountResourceActions(
-  root: HTMLElement,
-  service: string,
-  row: Row,
-  review: (operation: string, input: Record<string, unknown>) => void,
-) {
-  const actions = resourceActions(service, row);
-  if (!actions.length) return;
-  root.innerHTML = `<section class="resource-actions"><h2>${text("리소스 작업", "Resource actions")}</h2><p>${text("작업을 선택하고 입력을 확인한 뒤 실행 요청을 검토합니다.", "Choose an action and complete its inputs before reviewing the execution request.")}</p><div class="action-buttons">${actions.map((a, i) => `<button type="button" class="quiet ${a.danger ? "danger-action" : ""}" data-action="${i}" aria-expanded="false">${esc(a.label)}</button>`).join("")}</div><div class="action-form"></div></section>`;
-  root
-    .querySelectorAll<HTMLButtonElement>("[data-action]")
-    .forEach((button) => {
-      button.onclick = () => {
-        const action = actions[Number(button.dataset.action)];
-        root
-          .querySelectorAll("[data-action]")
-          .forEach((b) =>
-            b.setAttribute("aria-expanded", String(b === button)),
-          );
-        const host = root.querySelector<HTMLElement>(".action-form")!;
-        host.innerHTML = `<form><h3>${esc(action.label)}</h3><p>${esc(action.description)}</p>${action.field ? `<label>${esc(action.field.label)}${action.field.options ? `<select name="value" required><option value="">${text("선택하세요", "Choose a value")}</option>${action.field.options.map((v) => `<option>${esc(v)}</option>`).join("")}</select>` : `<input name="value" required maxlength="255" ${action.field.pattern ? `pattern="${esc(action.field.pattern)}"` : ""}>`}</label>` : ""}<p role="alert" class="action-error"></p><button class="primary" type="submit">${text("요청 검토로 이동", "Continue to request review")}</button><button type="button" class="quiet" data-cancel>${text("취소", "Cancel")}</button></form>`;
-        const form = host.querySelector("form")!;
-        form.onsubmit = (e) => {
-          e.preventDefault();
-          if (!form.reportValidity()) return;
-          try {
-            review(
-              action.operation,
-              action.input(
-                String(new FormData(form).get("value") ?? "").trim(),
-              ),
-            );
-          } catch (error) {
-            host.querySelector(".action-error")!.textContent = String(error);
-          }
-        };
-        host.querySelector<HTMLButtonElement>("[data-cancel]")!.onclick =
-          () => {
-            host.innerHTML = "";
-            button.setAttribute("aria-expanded", "false");
-            button.focus();
-          };
-        host.querySelector<HTMLElement>("input,select,button")?.focus();
-      };
-    });
 }
